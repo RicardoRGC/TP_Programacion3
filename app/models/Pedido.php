@@ -1,23 +1,28 @@
 <?php
 
 class Pedido
-{ //2-(POST)Alta cripto moneda( precio, nombre, foto, nacionalidad)->solo admin/(JWT)
+{
 
-    public $nombre;
-    public $foto;
+    public $codigoPedido; //5digitos
+    public $codigoMesa;
     public $demoraPedido;
     public $estado;
-    public $codigoPedido; //5digitos
+    public $idUsuario;
+    public $foto;
+    public $precioPedido;
+
 
 
     public function crearPedido()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO criptos (precio,nombre, foto,nacionalidad) VALUES (:precio,:nombre, :foto, :nacionalidad)");
-        $consulta->bindValue(':precio', $this->precio);
-        $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
-        $consulta->bindValue(':nacionalidad', $this->nacionalidad, PDO::PARAM_STR);
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido) VALUES (:codigoMesa,:idUsuario,:demoraPedido,:estado, :foto, :precioPedido)");
+        $consulta->bindValue(':codigoMesa', $this->codigoMesa, PDO::PARAM_INT);
+        $consulta->bindValue(':idUsuario', $this->idUsuario, PDO::PARAM_INT);
+        $consulta->bindValue(':demoraPedido', $this->demoraPedido, PDO::PARAM_INT);
+        $consulta->bindValue(':estado', $this->estado);
         $consulta->bindValue(':foto', $this->foto);
+        $consulta->bindValue(':precioPedido', $this->precioPedido);
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -26,7 +31,7 @@ class Pedido
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, precio,nombre, foto ,nacionalidad FROM criptos ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT  id as codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido FROM pedidos ");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
@@ -40,20 +45,20 @@ class Pedido
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
 
-    public static function obtenerPedido($nombre)
+    public static function obtenerPedido($codigoMesa)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id,precio, nombre, foto ,nacionalidad FROM criptos WHERE nombre = :nombre");
-        $consulta->bindValue(':nombre', $nombre, PDO::PARAM_STR);
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id,precio, codigoMesa, foto ,demora FROM pedidos WHERE codigoMesa = :codigoMesa");
+        $consulta->bindValue(':codigoMesa', $codigoMesa, PDO::PARAM_STR);
         $consulta->execute();
 
         return $consulta->fetchObject('Pedido');
     }
-    public static function obtenerPedidoNacionalidad($nacionalidad)
+    public static function obtenerPedidoNacionalidad($demora)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id,precio, nombre, foto ,nacionalidad FROM criptos WHERE nacionalidad = :nacionalidad");
-        $consulta->bindValue(':nacionalidad', $nacionalidad, PDO::PARAM_STR);
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id,precio, codigoMesa, foto ,demora FROM pedidos WHERE demora = :demora");
+        $consulta->bindValue(':demora', $demora, PDO::PARAM_STR);
         $consulta->execute();
 
         return $consulta->fetchObject('Pedido');

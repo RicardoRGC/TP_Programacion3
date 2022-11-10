@@ -1,43 +1,43 @@
 <?php
-require_once './models/Producto.php';
+require_once './models/ProductoPedido.php';
 require_once './interfaces/IApiUsable.php';
 
 
-class ProductoController extends Producto implements IApiUsable
+class ProductoPedidoController extends ProductoPedido implements IApiUsable
 {
-
   public function CargarUno($request, $response, $args)
   {
 
     $parametros = $request->getParsedBody();
 
-    if ($parametros != null && count($parametros) == 3) {
+    if ($parametros != null && count($parametros) == 6) {
       try {
         // var_dump($parametros);
-        $nombre = $parametros['nombre'];
-
-        var_dump($parametros['precio']);
-        $usuario1 = Producto::obtenerProducto($nombre);
-
-        if (!$usuario1) {
-
-          $precio = $parametros['precio'];
-          $nombre = $parametros['nombre'];
-          $tipo = $parametros['tipo'];
+        $codigoPedido = $parametros['codigoPedido'];
+        $precio = $parametros['precio'];
+        $idProducto = $parametros['idProducto'];
+        $demora = $parametros['demora'];
+        $cantidad = $parametros['cantidad'];
+        $estado = $parametros['estado'];
 
 
-          // Creamos el usuario
-          $usr = new Producto();
-          $usr->precio = $precio;
-          $usr->nombre = $nombre;
-          $usr->tipo = $tipo;
+        // Creamos el usuario
+        $usr = new ProductoPedido();
 
-          $id = $usr->crearProducto();
+        $usr->codigoPedido = $codigoPedido;
+        $usr->demora = $demora;
+        $usr->estado = $estado;
+        $usr->idProducto = $idProducto;
+        $usr->precio = $precio;
+        $usr->cantidad = $cantidad;
 
-          $payload = json_encode(array("mensaje" => "Producto creado con exito id: $id "));
-        } else {
-          $payload = json_encode("Producto ya existe");
-        }
+        $id = $usr->crearProductoPedido();
+
+        $payload = json_encode(array("mensaje" => "Creado con exito id: $id "));
+
+
+
+
       } catch (Exception $e) {
 
         $payload = json_encode(array('error' => $e->getMessage()));
@@ -55,11 +55,12 @@ class ProductoController extends Producto implements IApiUsable
       );
   }
   //-----------------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------------
   public function TraerUno($request, $response, $args)
   {
     // Buscamos usuario por nombre
     $nombre = $args['nombre'];
-    $producto = Producto::obtenerProducto($nombre);
+    $producto = ProductoPedido::obtenerPedido($nombre);
     $payload = json_encode($producto);
 
     $response->getBody()->write($payload);
@@ -72,7 +73,7 @@ class ProductoController extends Producto implements IApiUsable
   //----------------------------------------------------------------------------------------------------------------------------------
   public function TraerTodos($request, $response, $args)
   {
-    $lista = Producto::obtenerTodos();
+    $lista = ProductoPedido::obtenerTodos();
     $payload = json_encode(array("listaCripto" => $lista));
 
     $response->getBody()->write($payload);
