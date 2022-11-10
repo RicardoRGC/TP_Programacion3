@@ -7,21 +7,14 @@ class PedidoController extends Pedido implements IApiUsable
 {
   /*
     PEDIDO
-    public $foto;
-    public $demoraPedido;
-    public $estado;
-    public $codigoPedido; //5digitos  
+    public $codigoPedido; //5digitos   
 
     MESA
     public $codigoPedido;
-    public $codigoMesa;
     public $estado;
 
     PRODUCTO
-    public $precio;
-    public $nombre;
-    public $tipo; //comida bebida
-    public $codigoPedido;
+    public $codigoPedido; se genera
     public $demora;
     public $estado;
   */
@@ -35,36 +28,32 @@ class PedidoController extends Pedido implements IApiUsable
 
     if ($parametros != null && count($parametros) == 6) {
       try {
-        // var_dump($parametros);
+
+
+        $nombreProducto = $parametros['nombreProducto'];
         $nombre = $parametros['nombre'];
-
-        $usuario1 = Pedido::obtenerPedido($nombre);
-
-        if (!$usuario1) {
-
-          $precio = $parametros['precio'];
-          $nombre = $parametros['nombre'];
-          $tipo = $parametros['tipo'];
-          $codigoMesa = $parametros['codigoMesa'];
-          $demora = $parametros['demora'];
-          $estado = $parametros['estado'];
+        $tipoProducto = $parametros['tipoProducto'];
+        //mesa
+        $codigoMesa = $parametros['codigoMesa'];
+        $estadoMesa = $parametros['estadoMesa$estadoMesa'];
+        //pedido
+        $demoraPedido = $parametros['demoraPedido'];
+        $estadoPedido = $parametros['estadoPedido'];
+        $foto = $parametros['foto'];
 
 
-          // Creamos el usuario
-          $usr = new Pedido();
-          $usr->precio = $precio;
-          $usr->nombre = $nombre;
-          $usr->tipo = $tipo;
-          $usr->codigoMesa = $codigoMesa;
-          $usr->demora = $demora;
-          $usr->estado = $estado;
+        // Creamos el usuario
+        $usr = new Pedido();
+        $usr->precio = $precio;
+        $usr->nombre = $nombre;
+        $usr->tipo = $tipo;
+        $usr->codigoMesa = $codigoMesa;
+        $usr->demora = $demora;
+        $usr->estado = $estado;
 
-          $id = $usr->crearPedido();
+        $id = $usr->crearPedido();
 
-          $payload = json_encode(array("mensaje" => "Pedido creado con exito id: $id "));
-        } else {
-          $payload = json_encode("Pedido ya existe");
-        }
+        $payload = json_encode(array("mensaje" => "Pedido creado con exito id: $id "));
       } catch (Exception $e) {
 
         $payload = json_encode(array('error' => $e->getMessage()));
