@@ -8,6 +8,7 @@ class Mesa
     public $estado;
 
 
+
     public function crearMesa()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -22,7 +23,7 @@ class Mesa
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, ,nombreCliente ,estado FROM mesas ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombreCliente ,estado FROM mesas ");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Mesa');
@@ -55,11 +56,11 @@ class Mesa
         return $consulta->fetchObject('Mesa');
     }
 
-    public function modificarMesa($id)
+    public function ocuparMesa()
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET estado = :estado, nombreCliente = :nombreCliente WHERE id = :id");
-        $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
+        $consulta->bindValue(':estado', 'ocupada');
         $consulta->bindValue(':nombreCliente', $this->nombreCliente, PDO::PARAM_STR);
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->execute();

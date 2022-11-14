@@ -9,16 +9,16 @@ class LoginControllers extends Usuario
         $parametros = $request->getParsedBody();
 
         if ($parametros != null) {
-            $mail = $parametros['mail'];
+            $nombre = $parametros['nombre'];
             $clave = $parametros['clave'];
 
 
-            $usuario = Usuario::obtenerUsuario($mail);
+            $usuario = Usuario::obtenerUsuario($nombre);
 
             if (password_verify($clave, $usuario->clave)) {
                 $mensaje = 'Password is valid!';
 
-                $datos = array('mail' => $parametros['mail'], 'tipo' => $usuario->tipo);
+                $datos = array('nombre' => $parametros['nombre'], 'tipo' => $usuario->tipo, 'id' => $usuario->id); //crea el token con nombre y tipo
                 //creo el token con los datos del usuario
                 $token = AutentificadorJWT::CrearToken($datos);
 

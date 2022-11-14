@@ -49,9 +49,9 @@ $app->group(
     $group->put('[/modificar]', \UsuarioController::class . ':ModificarUno');
     $group->delete('[/]', \UsuarioController::class . ':BorrarUno');
   }
-) /*->add(
- new VerificarMiddleware()
- )*/;
+)->add(
+  new VerificarMiddleware()
+);
 //--------------------------------------------------------------------------------
 $app->group(
   '/productos',
@@ -62,9 +62,7 @@ $app->group(
     $group->put('[/modificar]', \UsuarioController::class . ':ModificarUno');
     $group->delete('[/]', \UsuarioController::class . ':BorrarUno');
   }
-) /*->add(
- new VerificarMiddleware()
- )*/;
+)->add(new VerificarMiddleware());
 //--------------------------------------------------------------------------------
 $app->group(
   '/mesas',
@@ -83,15 +81,16 @@ $app->group(
 $app->group(
   '/pedidos',
   function (RouteCollectorProxy $group) {
-    $group->get('[/]', \PedidoController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
+    // $group->get('[/]', \PedidoController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
+    $group->get('[/pedidos]', \PedidoController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
     $group->get('/{usuario}', \PedidoController::class . ':TraerUno');
     $group->post('[/Alta]', \PedidoController::class . ':CargarUno'); //cargar
     $group->put('[/modificar]', \PedidoController::class . ':ModificarUno');
     $group->delete('[/]', \PedidoController::class . ':BorrarUno');
   }
-) /*->add(
- new VerificarMiddleware()
- )*/;
+)->add(
+  new VerificarMiddleware()
+);
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 $app->group(

@@ -14,16 +14,26 @@ class PedidoController extends Pedido implements IApiUsable
     $parametros = $request->getParsedBody();
     $archivo = $request->getUploadedFiles();
 
-    if ($parametros != null && count($parametros) == 3) {
+    if ($parametros != null && count($parametros) >= 1) {
       try {
-        // var_dump($parametros);
-        // $demoraPedido = $parametros['demoraPedido'];
-        // $precioPedido = $parametros['precioPedido'];
-        $codigoMesa = $parametros['codigoMesa'];
-        $estado = $parametros['estado'];
-        // $demoraPedido = $parametros['demoraPedido'];
-        $idUsuario = $parametros['idUsuario'];
 
+        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+        // Output: 54esmdr0qf
+        $codigoPedido = substr(str_shuffle($permitted_chars), 0, 5);
+        $codigoMesa = $parametros['codigoMesa'];
+        $nombreCliente = $parametros['nombreCliente'];
+        //VERIFICAR DATOS EN LA MESA
+        $mesa = Mesa::obtenerMesa($codigoMesa);
+        if ($mesa->estado == 'ocupada')
+          throw  new Exception("Mesa ocupada");
+        $mesa->nombreCliente = $nombreCliente;
+        $mesa->ocuparMesa();
+
+
+
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
+        $usuario = AutentificadorJWT::ObtenerData($token);
         try {
           $foto = $archivo['foto'];
           if (is_null($foto) || $foto->getClientMediaType() == "") {
@@ -32,7 +42,7 @@ class PedidoController extends Pedido implements IApiUsable
           $ext = $foto->getClientMediaType();
           var_dump($ext);
           $ext = explode("/", $ext)[1];
-          $ruta = "./Cryptos/" . $codigoMesa . "." . $ext;
+          $ruta = "./pedido/" . $codigoMesa . "." . $ext;
           $foto->moveTo($ruta);
         } catch (Exception $e) {
           echo "no se pudo subir la imagen";
@@ -41,19 +51,16 @@ class PedidoController extends Pedido implements IApiUsable
         // Creamos el usuario
         $usr = new Pedido();
         $usr->codigoMesa = $codigoMesa;
-        // $usr->demoraPedido = $demoraPedido;
-        $usr->estado = $estado;
-        $usr->idUsuario = $idUsuario;
+        $usr->codigoPedido = $codigoPedido;
+        $usr->demoraPedido = 'pendiente';
+        $usr->estado = 'pendiente';
+        $usr->idUsuario = $usuario->id;
         $usr->foto = $ruta;
         // $usr->precioPedido = $precioPedido;
 
         $id = $usr->crearPedido();
 
         $payload = json_encode(array("mensaje" => "Creado con exito id: $id "));
-
-
-
-
       } catch (Exception $e) {
 
         $payload = json_encode(array('error' => $e->getMessage()));
@@ -90,6 +97,18 @@ class PedidoController extends Pedido implements IApiUsable
   public function TraerTodos($request, $response, $args)
   {
     $lista = Pedido::obtenerTodos();
+    $payload = json_encode(array("listaCripto" => $lista));
+
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  public function TraerTodospedidos($request, $response, $args)
+  {
+    $lista = Pedido::obtenerPedidos();
     $payload = json_encode(array("listaCripto" => $lista));
 
     $response->getBody()->write($payload);

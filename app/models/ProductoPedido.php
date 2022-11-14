@@ -4,7 +4,6 @@ class ProductoPedido
 {
 
     public $codigoPedido;
-    public $precio;
     public $idProducto;
     public $cantidad;
     public $demora;

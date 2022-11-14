@@ -10,34 +10,29 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
 
     $parametros = $request->getParsedBody();
 
-    if ($parametros != null && count($parametros) == 6) {
+    if ($parametros != null && count($parametros) >= 1) {
       try {
         // var_dump($parametros);
         $codigoPedido = $parametros['codigoPedido'];
-        $precio = $parametros['precio'];
         $idProducto = $parametros['idProducto'];
-        $demora = $parametros['demora'];
+        $demora = 'pendiente';
+        $estado = 'pendiente';
+
         $cantidad = $parametros['cantidad'];
-        $estado = $parametros['estado'];
 
 
         // Creamos el usuario
-        $usr = new ProductoPedido();
+        $producto = new ProductoPedido();
 
-        $usr->codigoPedido = $codigoPedido;
-        $usr->demora = $demora;
-        $usr->estado = $estado;
-        $usr->idProducto = $idProducto;
-        $usr->precio = $precio;
-        $usr->cantidad = $cantidad;
+        $producto->codigoPedido = $codigoPedido;
+        $producto->idProducto = $idProducto;
+        $producto->demora = $demora;
+        $producto->estado = $estado;
+        $producto->cantidad = $cantidad;
 
-        $id = $usr->crearProductoPedido();
+        $id = $producto->crearProductoPedido();
 
         $payload = json_encode(array("mensaje" => "Creado con exito id: $id "));
-
-
-
-
       } catch (Exception $e) {
 
         $payload = json_encode(array('error' => $e->getMessage()));

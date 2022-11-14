@@ -16,10 +16,11 @@ class Pedido
     public function crearPedido()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido) VALUES (:codigoMesa,:idUsuario,:demoraPedido,:estado, :foto, :precioPedido)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (codigoPedido,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido) VALUES (:codigoPedido,:codigoMesa,:idUsuario,:demoraPedido,:estado, :foto, :precioPedido)");
         $consulta->bindValue(':codigoMesa', $this->codigoMesa, PDO::PARAM_INT);
+        $consulta->bindValue(':codigoPedido', $this->codigoPedido, PDO::PARAM_STR);
         $consulta->bindValue(':idUsuario', $this->idUsuario, PDO::PARAM_INT);
-        $consulta->bindValue(':demoraPedido', $this->demoraPedido, PDO::PARAM_INT);
+        $consulta->bindValue(':demoraPedido', $this->demoraPedido);
         $consulta->bindValue(':estado', $this->estado);
         $consulta->bindValue(':foto', $this->foto);
         $consulta->bindValue(':precioPedido', $this->precioPedido);
@@ -31,10 +32,18 @@ class Pedido
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT  id as codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido FROM pedidos ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT   codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido FROM pedidos ");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
+    }
+    public static function obtenerPedidos()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT  id as codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido FROM pedidos ");
+        $consulta->execute();
+        // return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
+        return $consulta->fetch(PDO::FETCH_LAZY);
     }
     public static function obtenerTodosBaja()
     {
