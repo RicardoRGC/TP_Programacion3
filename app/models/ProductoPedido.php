@@ -3,6 +3,7 @@
 class ProductoPedido
 {
 
+    public $id;
     public $codigoPedido;
     public $idProducto;
     public $cantidad;
@@ -30,10 +31,19 @@ class ProductoPedido
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'ProductoPedido');
     }
+    public static function obtenerSumaPrecios()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        // select sum(cantidad) as cantidad_total_productos_vendidos from venta
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT sum(cantidad) as cantidad_total_productos_vendidos from venta ");
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_CLASS, 'ProductoPedido');
+    }
     public static function obtenerTodosBaja()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, usuario,  FROM usuarios WHERE fechaBaja is not null ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, usuario,  FROM ProductoPedido WHERE fechaBaja is not null ");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'ProductoPedido');
@@ -61,18 +71,27 @@ class ProductoPedido
     // public function modificarProductoPedido()
     // {
     //     $objAccesoDato = AccesoDatos::obtenerInstancia();
-    //     $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET usuario = :usuario,  = : WHERE id = :id");
+    //     $consulta = $objAccesoDato->prepararConsulta("UPDATE ProductoPedido SET usuario = :usuario,  = : WHERE id = :id");
     //     $Hash = password_hash($this->, PASSWORD_DEFAULT);
     //     $consulta->bindValue(':usuario', $this->usuario, PDO::PARAM_STR);
     //     $consulta->bindValue(':', $Hash);
     //     $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
     //     $consulta->execute();
     // }
+    public function modificarEstadoProductoPedido()
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE ProductosPedidos SET demora = :demora,estado = :estado WHERE id = :id");
+        $consulta->bindValue(':demora', $this->demora);
+        $consulta->bindValue(':estado', $this->estado,);
+        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $consulta->execute();
+    }
 
     public static function borrarProductoPedido($usuario)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET fechaBaja = :fechaBaja WHERE id = :id");
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE ProductoPedido SET fechaBaja = :fechaBaja WHERE id = :id");
         $fecha = new DateTime(date("d-m-Y"));
         $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
         $consulta->bindValue(':fechaBaja', date_format($fecha, 'Y-m-d H:i:s'));

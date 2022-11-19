@@ -18,10 +18,11 @@ class PedidoController extends Pedido implements IApiUsable
       try {
 
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        // Output: 54esmdr0qf
         $codigoPedido = substr(str_shuffle($permitted_chars), 0, 5);
+
         $codigoMesa = $parametros['codigoMesa'];
         $nombreCliente = $parametros['nombreCliente'];
+
         //VERIFICAR DATOS EN LA MESA
         $mesa = Mesa::obtenerMesa($codigoMesa);
         if ($mesa->estado == 'ocupada')
@@ -42,7 +43,7 @@ class PedidoController extends Pedido implements IApiUsable
           $ext = $foto->getClientMediaType();
           var_dump($ext);
           $ext = explode("/", $ext)[1];
-          $ruta = "./pedido/" . $codigoMesa . "." . $ext;
+          $ruta = "./pedido/" . $codigoMesa . "-" . $codigoPedido . "." . $ext;
           $foto->moveTo($ruta);
         } catch (Exception $e) {
           echo "no se pudo subir la imagen";
@@ -52,7 +53,7 @@ class PedidoController extends Pedido implements IApiUsable
         $usr = new Pedido();
         $usr->codigoMesa = $codigoMesa;
         $usr->codigoPedido = $codigoPedido;
-        $usr->demoraPedido = 'pendiente';
+        $usr->demoraPedido = null;
         $usr->estado = 'pendiente';
         $usr->idUsuario = $usuario->id;
         $usr->foto = $ruta;

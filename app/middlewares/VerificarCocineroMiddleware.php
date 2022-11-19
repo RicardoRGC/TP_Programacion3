@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
-class VerificarAdminMiddleware
+class VerificarCocineroMiddleware
 {
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
@@ -26,11 +26,11 @@ class VerificarAdminMiddleware
 
         if ($esValido) {
 
-            if ($payload->tipo == "socio") {
+            if ($payload->tipo == "cocinero" || $payload->tipo == "socio") {
 
                 $response = $handler->handle($request);
             } else {
-                $payload = json_encode('Error usted no es socio');
+                $payload = json_encode('Error usted no tiene Permisos');
 
                 $response->getBody()->write($payload);
             }

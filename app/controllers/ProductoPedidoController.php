@@ -17,20 +17,28 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
         $idProducto = $parametros['idProducto'];
         $demora = 'pendiente';
         $estado = 'pendiente';
-
         $cantidad = $parametros['cantidad'];
 
-
-        // Creamos el usuario
+        // Creamos el Producto PEDIDO
         $producto = new ProductoPedido();
 
         $producto->codigoPedido = $codigoPedido;
         $producto->idProducto = $idProducto;
-        $producto->demora = $demora;
-        $producto->estado = $estado;
         $producto->cantidad = $cantidad;
-
         $id = $producto->crearProductoPedido();
+
+        // CARGAR PRECIO EN EL PEDIDO.
+        $precio = Producto::obtenerPrecioProducto($idProducto);
+        $pedido = Pedido::obtenerPedido($codigoPedido);
+
+        // var_dump($precio->precio);
+
+        $pedido->precioPedido = $pedido->precioPedido + ($precio->precio * $cantidad);
+        var_dump($pedido->precioPedido);
+
+        $pedido->modificarPrecioPedido();
+
+        // var_dump($precio);
 
         $payload = json_encode(array("mensaje" => "Creado con exito id: $id "));
       } catch (Exception $e) {
@@ -79,26 +87,54 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
       );
   }
   ///MODIFICAR----------------------------------------------------------------------------------
-  public function ModificarUno($request, $response, $args)
+  public function ModificarEstado($request, $response, $args)
   {
 
+    $parametros = $request->getParsedBody();
+
+    if ($parametros != null) {
+      $id = $parametros['id']; //traer el producto pedido
+
+      $estado = $parametros['estado'];
+      $demora = $parametros['demora'];
+
+      $producto = new ProductoPedido();
+      $producto->id = $id;
+      $producto->estado = $estado;
+      $producto->demora = $demora;
+
+
+
+      $producto->modificarEstadoProductoPedido();
+
+      // $usr->modificarUsuario();
+
+      $payload = json_encode(array("mensaje" => "Usuario modificado con exito"));
+    } else {
+      $payload = json_encode("error de datos");
+    }
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  public function ModificarUno($request, $response, $args)
+  {
     $header = $request->getHeaderLine('Authorization');
     $token = trim(explode("Bearer", $header)[1]);
     $esValido = false;
-
     try {
       AutentificadorJWT::verificarToken($token);
       $esValido = true;
     } catch (Exception $e) {
       $payload = json_encode(array('error' => $e->getMessage()));
     }
-
     if ($esValido) {
       $parametros = $request->getParsedBody();
       if ($parametros != null) {
-
         var_dump($parametros);
-
         $nombre = $parametros['nombre'];
         $clave = $parametros['clave'];
         $id = $parametros['id'];
@@ -115,9 +151,6 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
         $payload = json_encode("error de datos");
       }
     }
-    // -----------------------------------------------------------
-
-
     $response->getBody()->write($payload);
     return $response
       ->withHeader(
