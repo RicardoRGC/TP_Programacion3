@@ -16,7 +16,7 @@ class UsuarioController extends Usuario implements IApiUsable
 
         $clave = $parametros['clave'];
 
-        echo $clave;
+        // echo $clave;
         //VALIDAR TIPO 
 
         $usuario1 = Usuario::obtenerUsuario($nombre);

@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
-class VerificarAdminMiddleware
+class VerificarSocioMiddleware
 {
     public function __invoke(Request $request, RequestHandler $handler): Response
     {

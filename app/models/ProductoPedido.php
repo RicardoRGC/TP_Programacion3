@@ -26,10 +26,21 @@ class ProductoPedido
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, precio,idProducto ,tipo ,codigoPedido,demora,estado FROM productospedidos ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto");
         $consulta->execute();
 
-        return $consulta->fetchAll(PDO::FETCH_CLASS, 'ProductoPedido');
+        return $consulta->fetch(PDO::FETCH_OBJ);
+        // return $consulta->fetch(PDO::FETCH_LAZY);
+    }
+    public static function obtenerComida()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
+        $consulta->execute();
+
+        // return $consulta->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
+        // return $consulta->fetch(PDO::FETCH_ASSOC);
+        return $consulta->fetchAll(PDO::FETCH_NAMED);
     }
     public static function obtenerSumaPrecios()
     {
@@ -57,6 +68,27 @@ class ProductoPedido
         $consulta->execute();
 
         return $consulta->fetchObject('ProductoPedido');
+    }
+    public static function obtenerDemoraProductoPedido($codigoPedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT MAX(demora) MAXIMA_DEMORA
+        FROM productospedidos WHERE productospedidos.codigoPedido= :codigoPedido");
+        $consulta->bindValue(':codigoPedido', $codigoPedido, PDO::PARAM_STR);
+        $consulta->execute();
+
+        return $consulta->fetch(PDO::FETCH_LAZY);
+    }
+
+
+    public static function obtenerEstadoProductosPedidos($codigoPedido) //Busca en todos los pedidos si hay un pendiente
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.estado FROM productospedidos WHERE productospedidos.codigoPedido= :codigoPedido");
+        $consulta->bindValue(':codigoPedido', $codigoPedido, PDO::PARAM_STR);
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_NAMED);
     }
     public static function obtenerProductoPedidotipo($tipo)
     {

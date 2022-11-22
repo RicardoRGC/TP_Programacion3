@@ -10,6 +10,8 @@ use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\Routing\RouteContext;
 
+use function DI\add;
+
 require __DIR__ . '/../vendor/autoload.php';
 require_once './controllers/AutentificadorJWT.php';
 require_once './db/AccesoDatos.php';
@@ -17,9 +19,10 @@ require_once './db/AccesoDatos.php';
 require_once './middlewares/SalidaMiddlewares.php';
 require_once './middlewares/EntradaMiddlewares.php';
 require_once './middlewares/VerificarMiddleware.php';
-require_once './middlewares/VerificarAdminMiddleware.php';
+require_once './middlewares/VerificarSocioMiddleware.php';
 require_once './middlewares/VerificarMozosMiddleware.php';
 require_once './middlewares/VerificarCocineroMiddleware.php';
+require_once './middlewares/GuardarCsvMiddlewares.php';
 
 require_once './controllers/ProductoPedidoController.php';
 require_once './controllers/ProductoControllers.php';
@@ -45,21 +48,16 @@ $app->addBodyParsingMiddleware();
 $app->group(
   '/usuarios',
   function (RouteCollectorProxy $group) {
-    $group->get('[/]', \UsuarioController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
-    $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
-    $group->post('[/Alta]', \UsuarioController::class . ':CargarUno'); //cargar
+    $group->get('[/]', \UsuarioController::class . ':TraerTodos')->add(new VerificarSocioMiddleware());
+    $group->post('[/Alta]', \UsuarioController::class . ':CargarUno');
     $group->put('[/modificar]', \UsuarioController::class . ':ModificarUno');
     $group->delete('[/]', \UsuarioController::class . ':BorrarUno');
   }
-)->add(
-  new VerificarMiddleware()
 );
 $app->group(
   '/pedidos',
   function (RouteCollectorProxy $group) {
-    // $group->get('[/]', \PedidoController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
-    $group->get('[/pedidos]', \PedidoController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
-    $group->get('/{usuario}', \PedidoController::class . ':TraerUno');
+    $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(new GuardarCsvMiddlewares());
     $group->post('[/Alta]', \PedidoController::class . ':CargarUno'); //cargar
     $group->put('[/modificar]', \PedidoController::class . ':ModificarUno');
     $group->delete('[/]', \PedidoController::class . ':BorrarUno');
@@ -72,9 +70,11 @@ $app->group(
 $app->group(
   '/productosPedidos',
   function (RouteCollectorProxy $group) {
-    $group->get('[/]', \ProductoPedidoController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
+    $group->get('[/]', \ProductoPedidoController::class . ':TraerTodos')->add(new VerificarCocineroMiddleware());
+    $group->get('/comida', \ProductoPedidoController::class . ':TraerComida')->add(new VerificarCocineroMiddleware());
     $group->post('[/productoPedido]', \ProductoPedidoController::class . ':CargarUno')->add(new VerificarMozosMiddleware());
-    $group->put('[/modificarEstado]', \ProductoPedidoController::class . ':ModificarEstado')->add(new VerificarCocineroMiddleware());
+    $group->put('[/modificarEstado]', \ProductoPedidoController::class . ':ModificarEstado')
+      ->add(new VerificarCocineroMiddleware());
     $group->delete('[/]', \ProductoPedidoController::class . ':BorrarUno');
   }
 );
@@ -85,11 +85,10 @@ $app->group(
 $app->group(
   '/mesas',
   function (RouteCollectorProxy $group) {
-    $group->get('[/]', \MesaController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
-    $group->get('/{usuario}', \MesaController::class . ':TraerUno');
-    $group->post('[/Alta]', \MesaController::class . ':CargarUno'); //cargar
+    $group->get('[/]', \MesaController::class . ':TraerTodos');
+    $group->post('[/Alta]', \MesaController::class . ':CargarUno')->add(new VerificarSocioMiddleware());
     $group->put('[/modificar]', \MesaController::class . ':ModificarUno');
-    $group->delete('[/]', \MesaController::class . ':BorrarUno');
+    $group->delete('[/]', \MesaController::class . ':BorrarUno')->add(new VerificarSocioMiddleware());
   }
 )->add(
   new VerificarMozosMiddleware()
@@ -99,18 +98,15 @@ $app->group(
 $app->group(
   '/productos',
   function (RouteCollectorProxy $group) {
-    $group->get('[/]', \ProductoController::class . ':TraerTodos') /*->add(new VerificarAdminMiddleware())*/;
+    $group->get('[/]', \ProductoController::class . ':TraerTodos') /*->add(new VerificarSocioMiddleware())*/;
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     $group->post('[/Alta]', \ProductoController::class . ':CargarUno'); //cargar
     $group->put('[/modificar]', \UsuarioController::class . ':ModificarUno');
     $group->delete('[/]', \UsuarioController::class . ':BorrarUno');
   }
-)->add(new VerificarAdminMiddleware());
+)->add(new VerificarMozosMiddleware());
 //--------------------------------------------------------------------------------
 $app->post('/login', \LoginControllers::class . ':Verificar'); //Clave ,usuario(verificar usuario)
-
-
-
 
 $app->get(
   '[/]',

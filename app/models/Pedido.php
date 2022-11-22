@@ -37,10 +37,18 @@ class Pedido
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
+    public static function obtenerTodosArrayAsoc()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT   codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido FROM pedidos ");
+        $consulta->execute();
+
+        return $consulta->fetch(PDO::FETCH_ASSOC);
+    }
     public static function obtenerPedidos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT  id as codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido FROM pedidos ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,precioPedido FROM pedidos ");
         $consulta->execute();
         // return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
         return $consulta->fetch(PDO::FETCH_LAZY);
@@ -73,6 +81,15 @@ class Pedido
         return $consulta->fetchObject('Pedido');
     }
 
+    public function modificarEstadoDemoraPedido()
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE pedidos SET estado = :estado, demoraPedido = :demoraPedido WHERE codigoPedido = :codigoPedido");
+        $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
+        $consulta->bindValue(':demoraPedido', $this->demoraPedido, PDO::PARAM_INT);
+        $consulta->bindValue(':codigoPedido', $this->codigoPedido, PDO::PARAM_STR);
+        $consulta->execute();
+    }
     public function modificarPedido()
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();

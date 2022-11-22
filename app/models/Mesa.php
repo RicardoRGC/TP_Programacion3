@@ -4,6 +4,7 @@ class Mesa
 {
 
     public $id;
+    public $codigoMesa;
     public $nombreCliente;
     public $estado;
 

@@ -61,7 +61,7 @@ class PedidoController extends Pedido implements IApiUsable
 
         $id = $usr->crearPedido();
 
-        $payload = json_encode(array("mensaje" => "Creado con exito id: $id "));
+        $payload = json_encode(array("mensaje" => "Creado con exito id: $id,codigoPedido: $codigoPedido "));
       } catch (Exception $e) {
 
         $payload = json_encode(array('error' => $e->getMessage()));
@@ -98,7 +98,7 @@ class PedidoController extends Pedido implements IApiUsable
   public function TraerTodos($request, $response, $args)
   {
     $lista = Pedido::obtenerTodos();
-    $payload = json_encode(array("listaCripto" => $lista));
+    $payload = json_encode(array("ListaPedidos" => $lista));
 
     $response->getBody()->write($payload);
     return $response
@@ -110,7 +110,7 @@ class PedidoController extends Pedido implements IApiUsable
   public function TraerTodospedidos($request, $response, $args)
   {
     $lista = Pedido::obtenerPedidos();
-    $payload = json_encode(array("listaCripto" => $lista));
+    $payload = json_encode(array("listaPedidos" => $lista));
 
     $response->getBody()->write($payload);
     return $response

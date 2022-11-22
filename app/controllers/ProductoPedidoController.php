@@ -77,7 +77,21 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
   public function TraerTodos($request, $response, $args)
   {
     $lista = ProductoPedido::obtenerTodos();
-    $payload = json_encode(array("listaCripto" => $lista));
+    // var_dump($lista);
+    $payload = json_encode(array("ProductosPedidos" => $lista));
+
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  public function TraerComida($request, $response, $args)
+  {
+    $lista = ProductoPedido::obtenerComida();
+    var_dump($lista);
+    $payload = json_encode(array("ProductosPedidos" => $lista));
 
     $response->getBody()->write($payload);
     return $response
@@ -93,23 +107,56 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
     $parametros = $request->getParsedBody();
 
     if ($parametros != null) {
-      $id = $parametros['id']; //traer el producto pedido
+      $id = $parametros['id'];
 
       $estado = $parametros['estado'];
-      $demora = $parametros['demora'];
 
-      $producto = new ProductoPedido();
-      $producto->id = $id;
-      $producto->estado = $estado;
-      $producto->demora = $demora;
+      if ($estado == "preparando" || $estado == "listo") {
 
 
 
-      $producto->modificarEstadoProductoPedido();
+        $demora = $parametros['demora'];
+        $codigoPedido = $parametros['codigoPedido']; //buscar la demora en PRoductoPEdidos
+        $pedido = new Pedido();
 
-      // $usr->modificarUsuario();
+        $productoPedido = new ProductoPedido(); //MODIFICO EL ESTADO DEL PEDIDO
+        $productoPedido->id = $id;
+        $productoPedido->estado = $estado;
+        $productoPedido->demora = $demora;
+        if ($estado == 'listo')
+          $productoPedido->demora = 0;
+        $productoPedido->modificarEstadoProductoPedido();
 
-      $payload = json_encode(array("mensaje" => "Usuario modificado con exito"));
+        $demoraPedido = ProductoPedido::obtenerDemoraProductoPedido($codigoPedido);
+        $estadoPedidos = ProductoPedido::obtenerEstadoProductosPedidos($codigoPedido);
+        // var_dump($estadoPedidos);
+        $estado = 'listo';
+        foreach ($estadoPedidos as $key => $value) {
+          // var_dump($value['estado']);
+          if ($value['estado'] == 'pendiente') {
+            $estado = $value['estado'];
+            break;
+          }
+          if (($value['estado']) == 'preparando') {
+            $estado = $value['estado'];
+            break;
+          }
+        }
+
+        $pedido->estado = $estado;
+        $pedido->demoraPedido = $demoraPedido->MAXIMA_DEMORA;
+        $pedido->codigoPedido = $codigoPedido;
+        var_dump($pedido);
+        $pedido->modificarEstadoDemoraPedido();
+
+
+        // $usr->modificarUsuario();
+
+        $payload = json_encode(array("mensaje" => "modificado con exito"));
+      } else {
+
+        $payload = json_encode(array("mensaje" => "estado Incorrecto"));
+      }
     } else {
       $payload = json_encode("error de datos");
     }

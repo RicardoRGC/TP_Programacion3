@@ -1,4 +1,4 @@
-
+SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto;
 
 
 create table usuarios(
