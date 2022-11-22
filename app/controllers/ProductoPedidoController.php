@@ -90,7 +90,20 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
   public function TraerComida($request, $response, $args)
   {
     $lista = ProductoPedido::obtenerComida();
-    var_dump($lista);
+    // var_dump($lista);
+    $payload = json_encode(array("ProductosPedidos" => $lista));
+
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  public function TraerBebida($request, $response, $args)
+  {
+    $lista = ProductoPedido::obtenerBebidas();
+    // var_dump($lista);
     $payload = json_encode(array("ProductosPedidos" => $lista));
 
     $response->getBody()->write($payload);

@@ -29,10 +29,21 @@ class ProductoPedido
         $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto");
         $consulta->execute();
 
-        return $consulta->fetch(PDO::FETCH_OBJ);
+        // return $consulta->fetch(PDO::FETCH_OBJ);
+        return $consulta->fetchAll(PDO::FETCH_NAMED);
         // return $consulta->fetch(PDO::FETCH_LAZY);
     }
     public static function obtenerComida()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
+        $consulta->execute();
+
+        // return $consulta->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
+        // return $consulta->fetch(PDO::FETCH_ASSOC);
+        return $consulta->fetchAll(PDO::FETCH_NAMED);
+    }
+    public static function obtenerBebidas()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");

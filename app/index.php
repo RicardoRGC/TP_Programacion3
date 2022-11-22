@@ -22,6 +22,7 @@ require_once './middlewares/VerificarMiddleware.php';
 require_once './middlewares/VerificarSocioMiddleware.php';
 require_once './middlewares/VerificarMozosMiddleware.php';
 require_once './middlewares/VerificarCocineroMiddleware.php';
+require_once './middlewares/VerificarCerveceroMiddleware.php';
 require_once './middlewares/GuardarCsvMiddlewares.php';
 
 require_once './controllers/ProductoPedidoController.php';
@@ -72,6 +73,7 @@ $app->group(
   function (RouteCollectorProxy $group) {
     $group->get('[/]', \ProductoPedidoController::class . ':TraerTodos')->add(new VerificarCocineroMiddleware());
     $group->get('/comida', \ProductoPedidoController::class . ':TraerComida')->add(new VerificarCocineroMiddleware());
+    $group->get('/bebida', \ProductoPedidoController::class . ':TraerBebida')->add(new VerificarCerveceroMiddleware());
     $group->post('[/productoPedido]', \ProductoPedidoController::class . ':CargarUno')->add(new VerificarMozosMiddleware());
     $group->put('[/modificarEstado]', \ProductoPedidoController::class . ':ModificarEstado')
       ->add(new VerificarCocineroMiddleware());
