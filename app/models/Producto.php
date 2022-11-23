@@ -6,14 +6,19 @@ class Producto
     public $nombre;
     public $precio;
     public $tipo;
+    public $fecha_alta;
+    public $fecha_baja;
 
     public function crearProducto()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productos (nombre, precio,tipo) VALUES (:nombre, :precio, :tipo)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productos (nombre, precio,tipo,fecha_alta) VALUES (:nombre, :precio, :tipo,:fecha_alta)");
         $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
         $consulta->bindValue(':tipo', $this->tipo, PDO::PARAM_STR);
         $consulta->bindValue(':precio', $this->precio);
+        date_default_timezone_set('	America/Argentina/Buenos_Aires');
+        $fecha = new DateTime(date("d-m-Y"));
+        $consulta->bindValue(':fecha_alta', date_format($fecha, 'Y-m-d H:i:s'));
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -67,13 +72,14 @@ class Producto
     //     $consulta->execute();
     // }
 
-    // public static function borrarProducto($usuario)
-    // {
-    //     $objAccesoDato = AccesoDatos::obtenerInstancia();
-    //     $consulta = $objAccesoDato->prepararConsulta("UPDATE productos SET fechaBaja = :fechaBaja WHERE id = :id");
-    //     $fecha = new DateTime(date("d-m-Y"));
-    //     $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
-    //     $consulta->bindValue(':fechaBaja', date_format($fecha, 'Y-m-d H:i:s'));
-    //     $consulta->execute();
-    // }
+    public static function borrarProducto($usuario)
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE productos SET fechaBaja = :fechaBaja WHERE id = :id");
+        $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
+        date_default_timezone_set('	America/Argentina/Buenos_Aires');
+        $fecha = new DateTime(date("d-m-Y"));
+        $consulta->bindValue(':fecha_baja', date_format($fecha, 'Y-m-d H:i:s'));
+        $consulta->execute();
+    }
 }

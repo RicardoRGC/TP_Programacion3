@@ -57,7 +57,6 @@ class PedidoController extends Pedido implements IApiUsable
         $usr->estado = 'pendiente';
         $usr->idUsuario = $usuario->id;
         $usr->foto = $ruta;
-        // $usr->precioPedido = $precioPedido;
 
         $id = $usr->crearPedido();
 
@@ -95,6 +94,23 @@ class PedidoController extends Pedido implements IApiUsable
       );
   }
   //----------------------------------------------------------------------------------------------------------------------------------
+  public function TraerPrecioPedido($request, $response, $args)
+  {
+
+    $parametros = $request->getQueryParams();
+
+    $codigoPedido = $parametros['codigoPedido'];
+
+    $lista = Pedido::obtenerPrecioPedido($codigoPedido);
+    $payload = json_encode(array("PrecioPedido" => $lista));
+
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
   public function TraerTodos($request, $response, $args)
   {
     $lista = Pedido::obtenerTodos();

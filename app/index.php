@@ -21,7 +21,7 @@ require_once './middlewares/EntradaMiddlewares.php';
 require_once './middlewares/VerificarMiddleware.php';
 require_once './middlewares/VerificarSocioMiddleware.php';
 require_once './middlewares/VerificarMozosMiddleware.php';
-require_once './middlewares/VerificarCocineroMiddleware.php';
+require_once './middlewares/VerificarEncargadosProducPediMiddleware.php';
 require_once './middlewares/VerificarCerveceroMiddleware.php';
 require_once './middlewares/GuardarCsvMiddlewares.php';
 
@@ -58,7 +58,8 @@ $app->group(
 $app->group(
   '/pedidos',
   function (RouteCollectorProxy $group) {
-    $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(new GuardarCsvMiddlewares());
+    $group->get('[/]', \PedidoController::class . ':TraerTodos');
+    $group->get('/PrecioFinal', \PedidoController::class . ':TraerPrecioPedido');
     $group->post('[/Alta]', \PedidoController::class . ':CargarUno'); //cargar
     $group->put('[/modificar]', \PedidoController::class . ':ModificarUno');
     $group->delete('[/]', \PedidoController::class . ':BorrarUno');
@@ -71,12 +72,12 @@ $app->group(
 $app->group(
   '/productosPedidos',
   function (RouteCollectorProxy $group) {
-    $group->get('[/]', \ProductoPedidoController::class . ':TraerTodos')->add(new VerificarCocineroMiddleware());
-    $group->get('/comida', \ProductoPedidoController::class . ':TraerComida')->add(new VerificarCocineroMiddleware());
+    $group->get('[/]', \ProductoPedidoController::class . ':TraerTodos')->add(new VerificarEncargadosProducPediMiddleware());
+    $group->get('/comida', \ProductoPedidoController::class . ':TraerComida')->add(new VerificarEncargadosProducPediMiddleware());
     $group->get('/bebida', \ProductoPedidoController::class . ':TraerBebida')->add(new VerificarCerveceroMiddleware());
     $group->post('[/productoPedido]', \ProductoPedidoController::class . ':CargarUno')->add(new VerificarMozosMiddleware());
     $group->put('[/modificarEstado]', \ProductoPedidoController::class . ':ModificarEstado')
-      ->add(new VerificarCocineroMiddleware());
+      ->add(new VerificarEncargadosProducPediMiddleware());
     $group->delete('[/]', \ProductoPedidoController::class . ':BorrarUno');
   }
 );

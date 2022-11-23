@@ -26,21 +26,8 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
         $producto->idProducto = $idProducto;
         $producto->cantidad = $cantidad;
         $id = $producto->crearProductoPedido();
-
-        // CARGAR PRECIO EN EL PEDIDO.
-        $precio = Producto::obtenerPrecioProducto($idProducto);
-        $pedido = Pedido::obtenerPedido($codigoPedido);
-
-        // var_dump($precio->precio);
-
-        $pedido->precioPedido = $pedido->precioPedido + ($precio->precio * $cantidad);
-        var_dump($pedido->precioPedido);
-
-        $pedido->modificarPrecioPedido();
-
-        // var_dump($precio);
-
-        $payload = json_encode(array("mensaje" => "Creado con exito id: $id "));
+        if ($id)
+          $payload = json_encode(array("mensaje" => "Creado con exito id: $id "));
       } catch (Exception $e) {
 
         $payload = json_encode(array('error' => $e->getMessage()));
@@ -63,10 +50,10 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
   {
     // Buscamos usuario por nombre
     $nombre = $args['nombre'];
-    $producto = ProductoPedido::obtenerPedido($nombre);
-    $payload = json_encode($producto);
+    // $producto = ProductoPedido::obtenerPedido($nombre);
+    // $payload = json_encode($producto);
 
-    $response->getBody()->write($payload);
+    // $response->getBody()->write($payload);
     return $response
       ->withHeader(
         'Content-Type',
@@ -138,37 +125,42 @@ class ProductoPedidoController extends ProductoPedido implements IApiUsable
         $productoPedido->demora = $demora;
         if ($estado == 'listo')
           $productoPedido->demora = 0;
-        $productoPedido->modificarEstadoProductoPedido();
+        $resultadoModificar = $productoPedido->modificarEstadoProductoPedido();
+        if (!empty($resultadoModificar)) {
 
-        $demoraPedido = ProductoPedido::obtenerDemoraProductoPedido($codigoPedido);
-        $estadoPedidos = ProductoPedido::obtenerEstadoProductosPedidos($codigoPedido);
-        // var_dump($estadoPedidos);
-        $estado = 'listo';
-        foreach ($estadoPedidos as $key => $value) {
-          // var_dump($value['estado']);
-          if ($value['estado'] == 'pendiente') {
-            $estado = $value['estado'];
-            break;
+          $demoraPedido = ProductoPedido::obtenerDemoraProductoPedido($codigoPedido);
+          // var_dump($demoraPedido);
+          $estadoPedidos = ProductoPedido::obtenerEstadoProductosPedidos($codigoPedido);
+          // var_dump($estadoPedidos);
+          $estado = 'listo';
+          foreach ($estadoPedidos as $key => $value) {
+            // var_dump($value['estado']);
+            if ($value['estado'] == 'pendiente') {
+              $estado = $value['estado'];
+              break;
+            }
+            if (($value['estado']) == 'preparando') {
+              $estado = $value['estado'];
+              break;
+            }
           }
-          if (($value['estado']) == 'preparando') {
-            $estado = $value['estado'];
-            break;
-          }
+
+          $pedido->estado = $estado;
+          $pedido->demoraPedido = $demoraPedido->MAXIMA_DEMORA;
+          $pedido->codigoPedido = $codigoPedido;
+          // var_dump($pedido);
+          $pedido->modificarEstadoDemoraPedido();
+
+
+          // $usr->modificarUsuario();
+          $payload = json_encode(array("mensaje" => "modificado con exito"));
+        } else {
+
+          $payload = json_encode(array("mensaje" => "Error no se encontro el pedido"));
         }
-
-        $pedido->estado = $estado;
-        $pedido->demoraPedido = $demoraPedido->MAXIMA_DEMORA;
-        $pedido->codigoPedido = $codigoPedido;
-        var_dump($pedido);
-        $pedido->modificarEstadoDemoraPedido();
-
-
-        // $usr->modificarUsuario();
-
-        $payload = json_encode(array("mensaje" => "modificado con exito"));
       } else {
 
-        $payload = json_encode(array("mensaje" => "estado Incorrecto"));
+        $payload = json_encode(array("mensaje" => "estado Incorrecto: preparando,listo"));
       }
     } else {
       $payload = json_encode("error de datos");

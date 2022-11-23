@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
 
-class VerificarCocineroMiddleware
+class VerificarEncargadosProducPediMiddleware
 {
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
@@ -26,7 +26,7 @@ class VerificarCocineroMiddleware
 
         if ($esValido) {
 
-            if ($payload->tipo == "cocinero" || $payload->tipo == "socio") {
+            if ($payload->tipo == "cocinero" || $payload->tipo == "cervecero" || $payload->tipo == "socio") {
 
                 $response = $handler->handle($request);
             } else {

@@ -7,7 +7,8 @@ class Mesa
     public $codigoMesa;
     public $nombreCliente;
     public $estado;
-
+    public $fecha_alta;
+    public $fecha_baja;
 
 
     public function crearMesa()
@@ -70,10 +71,11 @@ class Mesa
     public static function borrarMesa($usuario)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET fechaBaja = :fechaBaja WHERE id = :id");
-        $fecha = new DateTime(date("d-m-Y"));
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET fecha_baja = :fecha_baja WHERE id = :id");
         $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
-        $consulta->bindValue(':fechaBaja', date_format($fecha, 'Y-m-d H:i:s'));
+        date_default_timezone_set('	America/Argentina/Buenos_Aires');
+        $fecha = new DateTime(date("d-m-Y"));
+        $consulta->bindValue(':fecha_baja', date_format($fecha, 'Y-m-d H:i:s'));
         $consulta->execute();
     }
 }

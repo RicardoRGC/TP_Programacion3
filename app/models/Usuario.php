@@ -6,7 +6,8 @@ class Usuario
     public $nombre;
     public $clave;
     public $tipo;
-
+    public $fecha_alta;
+    public $fecha_baja;
     public function crearUsuario()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -31,7 +32,7 @@ class Usuario
     // public static function obtenerTodosBaja()
     // {
     //     $objAccesoDatos = AccesoDatos::obtenerInstancia();
-    //     $consulta = $objAccesoDatos->prepararConsulta("SELECT id, usuario, clave FROM usuarios WHERE fechaBaja is not null ");
+    //     $consulta = $objAccesoDatos->prepararConsulta("SELECT id, usuario, clave FROM usuarios WHERE fecha_baja is not null ");
     //     $consulta->execute();
 
     //     return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
@@ -58,13 +59,14 @@ class Usuario
     //     $consulta->execute();
     // }
 
-    // public static function borrarUsuario($usuario)
-    // {
-    //     $objAccesoDato = AccesoDatos::obtenerInstancia();
-    //     $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET fechaBaja = :fechaBaja WHERE id = :id");
-    //     $fecha = new DateTime(date("d-m-Y"));
-    //     $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
-    //     $consulta->bindValue(':fechaBaja', date_format($fecha, 'Y-m-d H:i:s'));
-    //     $consulta->execute();
-    // }
+    public static function borrarUsuario($usuario)
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET fecha_baja = :fecha_baja WHERE id = :id");
+        $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
+        date_default_timezone_set('	America/Argentina/Buenos_Aires');
+        $fecha = new DateTime(date("d-m-Y"));
+        $consulta->bindValue(':fecha_baja', date_format($fecha, 'Y-m-d H:i:s'));
+        $consulta->execute();
+    }
 }

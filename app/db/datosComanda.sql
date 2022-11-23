@@ -1,5 +1,7 @@
 SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto;
 
+select SUM(productospedidos.cantidad * productos.precio) as 'importe' from productospedidos 
+inner join productos on productospedidos.idProducto =productos.id
 
 create table usuarios(
 id int primary key AUTO_INCREMENT IDENTITY(5000,1) UNSIGNED not null,
