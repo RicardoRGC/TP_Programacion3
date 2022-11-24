@@ -12,24 +12,27 @@ class LoginControllers extends Usuario
             $nombre = $parametros['nombre'];
             $clave = $parametros['clave'];
 
-
             $usuario = Usuario::obtenerUsuario($nombre);
 
             if (password_verify($clave, $usuario->clave)) {
                 $mensaje = 'Password is valid!';
+                if (is_null($usuario->fecha_baja)) {
 
-                $datos = array('nombre' => $parametros['nombre'], 'tipo' => $usuario->tipo, 'id' => $usuario->id); //crea el token con nombre y tipo
-                //creo el token con los datos del usuario
-                $token = AutentificadorJWT::CrearToken($datos);
+                    $datos = array('nombre' => $parametros['nombre'], 'tipo' => $usuario->tipo, 'id' => $usuario->id); //crea el token con nombre y tipo
+                    //creo el token con los datos del usuario
+                    $token = AutentificadorJWT::CrearToken($datos);
 
-                $payload = json_encode(array('OK' => $mensaje, 'jwt' => $token, 'tipo' => $usuario->tipo));
+                    $payload = json_encode(array('OK' => $mensaje, 'jwt' => $token, 'tipo' => $usuario->tipo));
 
-                $response->getBody()->write($payload);
-                return $response
-                    ->withHeader(
-                        'Content-Type',
-                        'application/json'
-                    );
+                    $response->getBody()->write($payload);
+                    return $response
+                        ->withHeader(
+                            'Content-Type',
+                            'application/json'
+                        );
+                } else {
+                    $mensaje = 'Usted No puede Ingresar';
+                }
             } else {
                 $mensaje = 'Invalid password.';
             }

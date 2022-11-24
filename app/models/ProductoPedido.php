@@ -15,10 +15,14 @@ class ProductoPedido
     public function crearProductoPedido()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productospedidos (idProducto,cantidad,codigoPedido) VALUES (:idProducto, :cantidad,:codigoPedido)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productospedidos (idProducto,cantidad,codigoPedido,fecha_alta) VALUES (:idProducto, :cantidad,:codigoPedido,:fecha_alta)");
+
         $consulta->bindValue(':idProducto', $this->idProducto);
         $consulta->bindValue(':cantidad', $this->cantidad, PDO::PARAM_INT);
         $consulta->bindValue(':codigoPedido', $this->codigoPedido);
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
+        $fecha = new DateTime(date("d-m-Y"));
+        $consulta->bindValue(':fecha_alta', date_format($fecha, 'Y-m-d H:i:s'));
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -27,7 +31,7 @@ class ProductoPedido
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo,productosPedidos.fecha_alta,productosPedidos.fecha_baja FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto");
         $consulta->execute();
 
         // return $consulta->fetch(PDO::FETCH_OBJ);
@@ -37,7 +41,7 @@ class ProductoPedido
     public static function obtenerComida()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo,productosPedidos.fecha_alta,productosPedidos.fecha_baja FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
         $consulta->execute();
 
         // return $consulta->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
@@ -47,7 +51,7 @@ class ProductoPedido
     public static function obtenerBebidas()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo,productosPedidos.fecha_alta,productosPedidos.fecha_baja FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
         $consulta->execute();
 
         // return $consulta->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);

@@ -59,8 +59,10 @@ $app->group(
   '/pedidos',
   function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
+    $group->get('/codigoPedido', \PedidoController::class . ':TraerUno');
     $group->get('/PrecioFinal', \PedidoController::class . ':TraerPrecioPedido');
     $group->post('[/Alta]', \PedidoController::class . ':CargarUno'); //cargar
+    $group->post('/cargarFoto', \PedidoController::class . ':CargarFoto'); //cargar
     $group->put('[/modificar]', \PedidoController::class . ':ModificarUno');
     $group->delete('[/]', \PedidoController::class . ':BorrarUno');
   }
@@ -90,7 +92,7 @@ $app->group(
   function (RouteCollectorProxy $group) {
     $group->get('[/]', \MesaController::class . ':TraerTodos');
     $group->post('[/Alta]', \MesaController::class . ':CargarUno')->add(new VerificarSocioMiddleware());
-    $group->put('[/modificar]', \MesaController::class . ':ModificarUno');
+    $group->put('[/estadoMesaLibre]', \MesaController::class . ':ModificarEstadoLibre');
     $group->delete('[/]', \MesaController::class . ':BorrarUno')->add(new VerificarSocioMiddleware());
   }
 )->add(
@@ -110,7 +112,7 @@ $app->group(
 )->add(new VerificarMozosMiddleware());
 //--------------------------------------------------------------------------------
 $app->post('/login', \LoginControllers::class . ':Verificar'); //Clave ,usuario(verificar usuario)
-
+$app->get('/codigoPedido', \PedidoController::class . ':TraerUno');
 $app->get(
   '[/]',
   function (Request $request, Response $response) {

@@ -77,13 +77,82 @@ class PedidoController extends Pedido implements IApiUsable
         'application/json'
       );
   }
+  //-----------------------------------------------------------------------------------------------------------
+  public function CargarFoto($request, $response, $args)
+  {
+
+    $parametros = $request->getParsedBody();
+    $archivo = $request->getUploadedFiles();
+
+    if ($parametros != null && count($parametros) >= 1) {
+      try {
+
+        $codigoPedido = $parametros['codigoPedido'];
+
+        $header = $request->getHeaderLine('Authorization');
+        $token = trim(explode("Bearer", $header)[1]);
+        $usuario = AutentificadorJWT::ObtenerData($token);
+        try {
+          $foto = $archivo['foto'];
+          if (is_null($foto) || $foto->getClientMediaType() == "") {
+            throw new Exception("No file");
+          }
+          $ext = $foto->getClientMediaType();
+          var_dump($ext);
+          $ext = explode("/", $ext)[1];
+          $ruta = "./pedido/"  . $usuario->id . "-" . $codigoPedido . "." . $ext;
+          $foto->moveTo($ruta);
+        } catch (Exception $e) {
+          echo "no se pudo subir la imagen";
+          $ruta = "";
+        }
+        // Creamos el usuario
+        $usr = new Pedido();
+        $usr->codigoPedido = $codigoPedido;
+        $usr->foto = $ruta;
+
+        $usr->modificarFotoPedido();
+
+        $payload = json_encode(array("mensaje" => "Se cargo la imagen"));
+      } catch (Exception $e) {
+
+        $payload = json_encode(array('error' => $e->getMessage()));
+      }
+    } else {
+      $payload = json_encode('error no hay datos');
+    }
+
+
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
   //-----------------------------------------------------------------------------------
   //-----------------------------------------------------------------------------------
   public function TraerUno($request, $response, $args)
   {
-    // Buscamos usuario por nombre
-    $nombre = $args['nombre'];
-    $producto = Pedido::obtenerPedido($nombre);
+    // $nombre = $args['codigoPedido'];
+    $parametros = $request->getQueryParams();
+    $producto = Pedido::obtenerPedidoCliente($parametros['codigoPedido']);
+    $payload = json_encode($producto);
+
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  //----------------------------------------------------------------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------------
+  public function TraerUnoDetalles($request, $response, $args)
+  {
+    // $nombre = $args['codigoPedido'];
+    $parametros = $request->getQueryParams();
+    $producto = Pedido::obtenerPedidoDetalles($parametros['codigoPedido']);
     $payload = json_encode($producto);
 
     $response->getBody()->write($payload);

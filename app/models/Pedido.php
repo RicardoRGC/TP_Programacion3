@@ -16,14 +16,14 @@ class Pedido
     public function crearPedido()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (codigoPedido,codigoMesa, idUsuario,demoraPedido,estado,foto,:fecha_alta) VALUES (:codigoPedido,:codigoMesa,:idUsuario,:demoraPedido,:estado, :foto,:fecha_alta)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (codigoPedido,codigoMesa, idUsuario,demoraPedido,estado,foto,fecha_alta) VALUES (:codigoPedido,:codigoMesa,:idUsuario,:demoraPedido,:estado, :foto,:fecha_alta)");
         $consulta->bindValue(':codigoMesa', $this->codigoMesa, PDO::PARAM_INT);
         $consulta->bindValue(':codigoPedido', $this->codigoPedido, PDO::PARAM_STR);
         $consulta->bindValue(':idUsuario', $this->idUsuario, PDO::PARAM_INT);
         $consulta->bindValue(':demoraPedido', $this->demoraPedido);
         $consulta->bindValue(':estado', $this->estado);
         $consulta->bindValue(':foto', $this->foto);
-        date_default_timezone_set('	America/Argentina/Buenos_Aires');
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
         $fecha = new DateTime(date("d-m-Y"));
         $consulta->bindValue(':fecha_alta', date_format($fecha, 'Y-m-d H:i:s'));
         $consulta->execute();
@@ -34,7 +34,7 @@ class Pedido
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT   codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto FROM pedidos ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT   codigoPedido ,codigoMesa, idUsuario,demoraPedido,estado,foto,fecha_alta,fecha_baja FROM pedidos ");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
@@ -64,7 +64,7 @@ class Pedido
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
 
-    public static function obtene($codigoPedido)
+    public static function obtenerPrecioPedido($codigoPedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT SUM(productospedidos.cantidad * productos.precio) as 'importe' from productospedidos 
@@ -76,15 +76,33 @@ class Pedido
         return $consulta->fetch(PDO::FETCH_ASSOC);
         // return $consulta->fetchObject('Pedido');
     }
-    public static function obtenerPedido($codigoPedido)
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    public static function obtenerPedidoCliente($codigoPedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, codigoPedido, foto ,demoraPedido,codigoMesa,idUsuario FROM pedidos WHERE codigoPedido = :codigoPedido");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT  codigoPedido,demoraPedido,codigoMesa,idUsuario FROM pedidos WHERE codigoPedido = :codigoPedido");
         $consulta->bindValue(':codigoPedido', $codigoPedido, PDO::PARAM_STR);
         $consulta->execute();
 
-        return $consulta->fetchObject('Pedido');
+        // return $consulta->fetchObject('Pedido');
+        // return $consulta->fetch(PDO::FETCH_LAZY);
+        return $consulta->fetch(PDO::FETCH_ASSOC);
     }
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    public static function obtenerPedidoDetalles($codigoPedido)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT  codigoPedido,demoraPedido,codigoMesa,idUsuario FROM pedidos WHERE codigoPedido = :codigoPedido");
+        $consulta->bindValue(':codigoPedido', $codigoPedido, PDO::PARAM_STR);
+        $consulta->execute();
+
+        // return $consulta->fetchObject('Pedido');
+        // return $consulta->fetch(PDO::FETCH_LAZY);
+        return $consulta->fetch(PDO::FETCH_ASSOC);
+    }
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
     public static function obtenerPedidoNacionalidad($demoraPedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -107,11 +125,18 @@ class Pedido
     public function modificarPedido()
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE pedidos SET usuario = :usuario, foto = :foto WHERE id = :id");
-        $fotoHash = password_hash($this->foto, PASSWORD_DEFAULT);
-        $consulta->bindValue(':usuario', $this->usuario, PDO::PARAM_STR);
-        $consulta->bindValue(':foto', $fotoHash);
-        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE pedidos SET demoraPedido = :demoraPedido WHERE codigoPedido = :codigoPedido");
+        $consulta->bindValue(':estado', $this->estado, PDO::PARAM_STR);
+        $consulta->bindValue(':demoraPedido', $this->demoraPedido, PDO::PARAM_INT);
+        $consulta->bindValue(':codigoPedido', $this->codigoPedido, PDO::PARAM_STR);
+        $consulta->execute();
+    }
+    public function modificarFotoPedido()
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE pedidos SET foto = :foto WHERE codigoPedido = :codigoPedido");
+        $consulta->bindValue(':foto', $this->foto);
+        $consulta->bindValue(':codigoPedido', $this->codigoPedido, PDO::PARAM_INT);
         $consulta->execute();
     }
     // public function modifica()

@@ -21,7 +21,6 @@ class MesaController extends Mesa implements IApiUsable
         $id = $usr->crearMesa();
 
         $payload = json_encode(array("mensaje" => "Mesa creado con exito id: $id "));
-
       } catch (Exception $e) {
 
         $payload = json_encode(array('error' => $e->getMessage()));
@@ -71,27 +70,53 @@ class MesaController extends Mesa implements IApiUsable
   {
 
     $parametros = $request->getParsedBody();
+
     if ($parametros != null) {
 
 
-      $nombreCliente = $parametros['nombreCliente'];
-      $estado = $parametros['estado'];
-      $id = $parametros['id'];
+      // $nombreCliente = $parametros['nombreCliente'];
+      // $estado = $parametros['estado'];
+      $idMesa = $parametros['id'];
 
       $usr = new Mesa();
-      $usr->nombreCliente = $nombreCliente;
-      $usr->estado = $estado;
-      $usr->id = $id;
+      $usr->id = $idMesa;
 
-      $usr->modificarMesa($id);
+      $usr->ocuparMesa();
 
       $payload = json_encode(array("mensaje" => "Mesa modificado con exito"));
     } else {
 
       $payload = json_encode("error de datos");
     }
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  public function ModificarEstadoLibre($request, $response, $args)
+  {
+
+    $parametros = $request->getParsedBody();
+
+    if ($parametros != null) {
 
 
+      // $nombreCliente = $parametros['nombreCliente'];
+      // $estado = $parametros['estado'];
+      $idMesa = $parametros['idMesa'];
+
+      $usr = new Mesa();
+      $usr->id = $idMesa;
+
+      $usr->mesaEstadoLibre();
+
+      $payload = json_encode(array("mensaje" => "Mesa modificado con exito"));
+    } else {
+
+      $payload = json_encode("error de datos");
+    }
     $response->getBody()->write($payload);
     return $response
       ->withHeader(

@@ -67,6 +67,15 @@ class Mesa
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->execute();
     }
+    public function mesaEstadoLibre()
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET estado = :estado, nombreCliente = :nombreCliente WHERE id = :id");
+        $consulta->bindValue(':estado', 'libre');
+        $consulta->bindValue(':nombreCliente', '');
+        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $consulta->execute();
+    }
 
     public static function borrarMesa($usuario)
     {
