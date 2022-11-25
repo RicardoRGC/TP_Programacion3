@@ -26,7 +26,7 @@ class VerificarEncargadosProducPediMiddleware
 
         if ($esValido) {
 
-            if ($payload->tipo == "cocinero" || $payload->tipo == "cervecero" || $payload->tipo == "socio") {
+            if ($payload->tipo == "cocinero" || $payload->tipo == "cervecero" || $payload->tipo == "bartender" || $payload->tipo == "socio") {
 
                 $response = $handler->handle($request);
             } else {

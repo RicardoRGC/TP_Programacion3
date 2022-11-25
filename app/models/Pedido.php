@@ -91,7 +91,7 @@ class Pedido
     }
     //-----------------------------------------------------------------------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------------------------
-    public static function obtenerPedidoDetalles($codigoPedido)
+    public static function obtenerPedidosListos($codigoPedido)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT  codigoPedido,demoraPedido,codigoMesa,idUsuario FROM pedidos WHERE codigoPedido = :codigoPedido");

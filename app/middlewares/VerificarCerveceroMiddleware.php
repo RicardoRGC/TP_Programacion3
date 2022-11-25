@@ -26,7 +26,7 @@ class VerificarCerveceroMiddleware
 
         if ($esValido) {
 
-            if ($payload->tipo == "cervecero" || $payload->tipo == "socio") {
+            if ($payload->tipo == "cervecero" || $payload->tipo == "bartender" || $payload->tipo == "socio") {
 
                 $response = $handler->handle($request);
             } else {

@@ -41,7 +41,10 @@ class ProductoPedido
     public static function obtenerComida()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo,productosPedidos.fecha_alta,productosPedidos.fecha_baja FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo,productosPedidos.fecha_alta,productosPedidos.fecha_baja FROM productospedidos inner join productos 
+        WHERE productos.id=productospedidos.idProducto 
+        and productos.tipo='comida' 
+        and estado IN ('pendiente','preparando') ");
         $consulta->execute();
 
         // return $consulta->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
@@ -51,7 +54,10 @@ class ProductoPedido
     public static function obtenerBebidas()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo,productosPedidos.fecha_alta,productosPedidos.fecha_baja FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto and productos.tipo='comida'");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo,productosPedidos.fecha_alta,productosPedidos.fecha_baja FROM productospedidos inner join productos 
+        WHERE productos.id=productospedidos.idProducto 
+        and productos.tipo='bebida' 
+        and estado IN ('pendiente','preparando') ");
         $consulta->execute();
 
         // return $consulta->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);

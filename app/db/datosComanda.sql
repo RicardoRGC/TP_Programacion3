@@ -1,4 +1,18 @@
+SELECT nombre, tipo
+FROM (
+    SELECT productos.nombre as nombre, productos.tipo as tipo
+    FROM productos
+    WHERE productos.id=1
+    
+    UNION ALL
+
+    SELECT productospedidos.codigoPedido as nombre, productospedidos.demora as tipo
+    FROM productospedidos
+    WHERE productospedidos.idProducto=1
+) jugadores
 SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.cantidad, productospedidos.estado, productos.nombre, productos.tipo FROM productospedidos inner join productos WHERE productos.id=productospedidos.idProducto;
+
+
 
 select SUM(productospedidos.cantidad * productos.precio) as 'importe' from productospedidos 
 inner join productos on productospedidos.idProducto =productos.id
