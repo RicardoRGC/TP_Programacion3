@@ -30,6 +30,17 @@ class Mesa
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Mesa');
     }
+    public static function obtenerMesaMasUtilizada()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT codigoMesa, COUNT( codigoMesa) maximo
+        FROM pedidos
+        GROUP BY codigoMesa
+        ORDER BY maximo DESC LIMIT 1 ");
+        $consulta->execute();
+
+        return $consulta->fetch(PDO::FETCH_ASSOC);
+    }
     // public static function obtenerTodosBaja()
     // {
     //     $objAccesoDatos = AccesoDatos::obtenerInstancia();

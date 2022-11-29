@@ -1,3 +1,10 @@
+
+-- traigo la mesa mas repetida en los pedidos
+SELECT codigoMesa, COUNT( codigoMesa) maximo
+FROM pedidos
+GROUP BY codigoMesa
+ORDER BY maximo DESC LIMIT 1
+
 SELECT encuestas.detalles, MAX((puntuacionMesa + puntuacionRestaurante+puntuacionMozo+puntuacionCocinero)/4) totalpuntos FROM encuestas 
 
 SELECT nombre, tipo

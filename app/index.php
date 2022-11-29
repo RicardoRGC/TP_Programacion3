@@ -70,8 +70,8 @@ $app->group(
     $group->delete('[/]', \PedidoController::class . ':BorrarUno');
   }
 )->add(
-    new VerificarMozosMiddleware()
-  );
+  new VerificarMozosMiddleware()
+);
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 $app->group(
@@ -94,6 +94,7 @@ $app->group(
   '/mesas',
   function (RouteCollectorProxy $group) {
     $group->get('[/]', \MesaController::class . ':TraerTodos');
+    $group->get('/TraerMesaMasUtilizada', \MesaController::class . ':TraerMesaMasUtilizada');
     $group->post('[/Alta]', \MesaController::class . ':CargarUno')->add(new VerificarSocioMiddleware());
     $group->put('/estadoMesaLibre', \MesaController::class . ':ModificarEstadoLibre');
     $group->put('/estadoMesaComiendo', \MesaController::class . ':ModificarEstadoComiendo');
@@ -101,8 +102,8 @@ $app->group(
     $group->delete('[/]', \MesaController::class . ':BorrarUno')->add(new VerificarSocioMiddleware());
   }
 )->add(
-    new VerificarMozosMiddleware()
-  );
+  new VerificarMozosMiddleware()
+);
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 $app->group(
@@ -133,7 +134,6 @@ $app->group(
     $group->get('/guardar', \LoginControllers::class . ':GuardarRegistrosCsv');
     $group->get('/leerCSV', \LoginControllers::class . ':CargarRegistrosCsv');
     $group->get('/leerCSVSubirDB', \LoginControllers::class . ':CargarRegistrosCsvSubirDB');
-
   }
 )->add(new VerificarSocioMiddleware());
 //--------------------------------------------------------------------------------
