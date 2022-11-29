@@ -1,9 +1,9 @@
 <?php
-require_once './models/Pedido.php';
+require_once './models/Cuenta.php';
 require_once './interfaces/IApiUsable.php';
 
 
-class PedidoController extends Pedido implements IApiUsable
+class CuentaController extends Cuenta implements IApiUsable
 {
 
 
@@ -13,6 +13,7 @@ class PedidoController extends Pedido implements IApiUsable
 
     $parametros = $request->getParsedBody();
     $archivo = $request->getUploadedFiles();
+
 
     if ($parametros != null && count($parametros) >= 1) {
       try {
@@ -50,7 +51,7 @@ class PedidoController extends Pedido implements IApiUsable
           $ruta = "";
         }
         // Creamos el usuario
-        $usr = new Pedido();
+        $usr = new Cuenta();
         $usr->codigoMesa = $codigoMesa;
         $usr->codigoPedido = $codigoPedido;
         $usr->demoraPedido = null;
@@ -107,7 +108,7 @@ class PedidoController extends Pedido implements IApiUsable
           $ruta = "";
         }
         // Creamos el usuario
-        $usr = new Pedido();
+        $usr = new Cuenta();
         $usr->codigoPedido = $codigoPedido;
         $usr->foto = $ruta;
 
@@ -136,7 +137,7 @@ class PedidoController extends Pedido implements IApiUsable
   {
     // $nombre = $args['codigoPedido'];
     $parametros = $request->getQueryParams();
-    $producto = Pedido::obtenerPedidoCliente($parametros['codigoPedido']);
+    $producto = Cuenta::obtenerPedidoCliente($parametros['codigoPedido']);
     $payload = json_encode($producto);
 
     $response->getBody()->write($payload);
@@ -150,17 +151,17 @@ class PedidoController extends Pedido implements IApiUsable
   //-----------------------------------------------------------------------------------
   public function TraerUnoDetalles($request, $response, $args)
   {
-    // // $nombre = $args['codigoPedido'];
-    // $parametros = $request->getQueryParams();
-    // $producto = Pedido::obtenerPedidoDetalles($parametros['codigoPedido']);
-    // $payload = json_encode($producto);
+    // $nombre = $args['codigoPedido'];
+    $parametros = $request->getQueryParams();
+    $producto = Cuenta::obtenerPedidoDetalles($parametros['codigoPedido']);
+    $payload = json_encode($producto);
 
-    // $response->getBody()->write($payload);
-    // return $response
-    //   ->withHeader(
-    //     'Content-Type',
-    //     'application/json'
-    //   );
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
   }
   //----------------------------------------------------------------------------------------------------------------------------------
   public function TraerPrecioPedido($request, $response, $args)
@@ -170,7 +171,7 @@ class PedidoController extends Pedido implements IApiUsable
 
     $codigoPedido = $parametros['codigoPedido'];
 
-    $lista = Pedido::obtenerPrecioPedido($codigoPedido);
+    $lista = Cuenta::obtenerPrecioPedido($codigoPedido);
     $payload = json_encode(array("PrecioPedido" => $lista));
 
     $response->getBody()->write($payload);
@@ -180,29 +181,9 @@ class PedidoController extends Pedido implements IApiUsable
         'application/json'
       );
   }
-  public function TraerPedidoPorMesa($request, $response, $args)
-  {
-    try {
-      //code...
-      $parametros = $request->getQueryParams();
-
-      $codigoMesa = $parametros['codigoMesa'];
-
-      $lista = Pedido::obtenerPedidoPorMesa($codigoMesa);
-      $payload = json_encode(array("pedido" => $lista));
-    } catch (\Throwable $th) {
-      $payload = json_encode(array("error" => "algo salio mal"));
-    }
-    $response->getBody()->write($payload);
-    return $response
-      ->withHeader(
-        'Content-Type',
-        'application/json'
-      );
-  }
   public function TraerTodos($request, $response, $args)
   {
-    $lista = Pedido::obtenerTodos();
+    $lista = Cuenta::obtenerTodos();
     $payload = json_encode(array("ListaPedidos" => $lista));
 
     $response->getBody()->write($payload);
@@ -214,7 +195,7 @@ class PedidoController extends Pedido implements IApiUsable
   }
   public function TraerPedidosListos($request, $response, $args)
   {
-    $lista = Pedido::obtenerPedidosListos();
+    $lista = Cuenta::obtenerPedidosListos();
     $payload = json_encode(array("ListaPedidos" => $lista));
 
     $response->getBody()->write($payload);
@@ -226,7 +207,7 @@ class PedidoController extends Pedido implements IApiUsable
   }
   public function TraerTodospedidos($request, $response, $args)
   {
-    $lista = Pedido::obtenerPedidos();
+    $lista = Cuenta::obtenerPedidos();
     $payload = json_encode(array("listaPedidos" => $lista));
 
     $response->getBody()->write($payload);

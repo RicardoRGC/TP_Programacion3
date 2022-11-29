@@ -3,7 +3,7 @@ FROM (
     SELECT productos.nombre as nombre, productos.tipo as tipo
     FROM productos
     WHERE productos.id=1
-    
+
     UNION ALL
 
     SELECT productospedidos.codigoPedido as nombre, productospedidos.demora as tipo
@@ -14,14 +14,42 @@ SELECT productospedidos.id, productospedidos.codigoPedido,productospedidos.canti
 
 
 
-select SUM(productospedidos.cantidad * productos.precio) as 'importe' from productospedidos 
+select SUM(productospedidos.cantidad * productos.precio) as 'importe' from productospedidos
 inner join productos on productospedidos.idProducto =productos.id
 
+
+create table cuenta(
+id int primary key AUTO_INCREMENT not null,
+precioCuenta float  null,
+codigoPedido int(11)  null,
+fecha_alta datetime not null)
+ AUTO_INCREMENT = 1;
+
+
 create table usuarios(
-id int primary key AUTO_INCREMENT IDENTITY(5000,1) UNSIGNED not null,
+id int primary key AUTO_INCREMENT not null,
 nombre varchar(50) not null,
 clave int not null,
 tipo varchar(50) not null);
+
+
+create table registros_login(
+id int primary key AUTO_INCREMENT not null,
+idUsuario int not null,
+nombre varchar(50) not null,
+tipo varchar(50) not null,
+fechaIngreso datetime not null
+);
+
+create table encuestas(
+id int primary key AUTO_INCREMENT not null,
+codigoMesa varchar(50) not null,
+codigoPedido varchar(50) not null,
+puntuacionMesa int not null,
+puntuacionRestaurante int not null,
+puntuacionMozo int not null,
+puntuacionCocinero int not null,
+detalles varchar(50) not null);
 
 create table productos(
 id int primary key AUTO_INCREMENT not null,
@@ -44,7 +72,7 @@ demoraPedido int  null,
 estado varchar(50) not null,
 precioPedido float  null,
 foto varchar(50) not null)
- AUTO_INCREMENT = 10000;
+ AUTO_INCREMENT = 1;
 
 create table mesas(
 id int primary key AUTO_INCREMENT not null,
@@ -143,26 +171,26 @@ select sum(cantidad) as cantidad_total_productos_vendidos from venta
 --5. Mostrar los primeros 3 números de productos que se han enviado.
 select codigo_de_barra from producto limit 3;
 --6. Mostrar los nombres del usuario y los nombres de los productos de cada venta.
-select usuario.nombre, producto.nombre from venta 
+select usuario.nombre, producto.nombre from venta
 inner join usuario on venta.id_usuario=usuario.id
 inner join producto on venta.id_producto=producto.id;
 --7. Indicar el monto (cantidad * precio) por cada una de las venta.
-select (venta.cantidad * producto.precio) as 'importe' from venta 
+select (venta.cantidad * producto.precio) as 'importe' from venta
 inner join producto on venta.id_producto=producto.id;
 --8. Obtener la cantidad total del producto 1003 vendido por el usuario 104.
 select venta.cantidad from venta
 inner join usuario on venta.id_usuario=usuario.id
-inner join producto on venta.id_producto=producto.id 
+inner join producto on venta.id_producto=producto.id
 where producto.id=1003 and usuario.id=104;
 --9. Obtener todos los números de los productos vendidos por algún usuario de ‘Avellaneda’.
-select producto.codigo_de_barra, producto.id as id_producto, usuario.id as id_usuario from producto 
+select producto.codigo_de_barra, producto.id as id_producto, usuario.id as id_usuario from producto
 inner join venta on venta.id_producto=producto.id
 inner join usuario on venta.id_usuario=usuario.id
 where usuario.localidad = 'Avellaneda';
 --10.Obtener los datos completos de los usuarios cuyos nombres contengan la letra ‘u’.
 select * from usuario where nombre like '%u%'
 --11. Traer las venta entre junio del 2020 y febrero 2021.
-select producto.nombre, venta.fecha_de_venta from producto 
+select producto.nombre, venta.fecha_de_venta from producto
 inner join venta on venta.id_producto=producto.id
 where venta.fecha_de_venta > '2020-06-01' and venta.fecha_de_venta < '2021-02-01';
 --12. Obtener los usuarios registrados antes del 2021.

@@ -11,6 +11,7 @@ class ProductoPedido
     public $estado;
     public $fecha_alta;
     public $fecha_baja;
+    public $id_preparador;
 
     public function crearProductoPedido()
     {
@@ -135,9 +136,10 @@ class ProductoPedido
     public function modificarEstadoProductoPedido()
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE ProductosPedidos SET demora = :demora,estado = :estado WHERE id = :id");
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE ProductosPedidos SET demora = :demora,estado = :estado,id_preparador=:id_preparador WHERE id = :id");
         $consulta->bindValue(':demora', $this->demora);
-        $consulta->bindValue(':estado', $this->estado,);
+        $consulta->bindValue(':estado', $this->estado);
+        $consulta->bindValue(':id_preparador', $this->id_preparador);
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->execute();
 

@@ -1,22 +1,30 @@
 <?php
 
 class Encuesta
-{ //2-(POST)Alta cripto moneda( precio, nombre, foto, nacionalidad)->solo admin/(JWT)
-
-    public $precio;
-    public $nombre;
-    public $foto;
-    public $nacionalidad;
-    public $fecha_alta;
+{
+    public $codigoMesa;
+    public $codigoPedido;
+    public $puntuacionMesa;
+    public $puntuacionRestaurante;
+    public $puntuacionMozo;
+    public $puntuacionCocinero;
+    public $detalles;
+    public $fecha;
     public $fecha_baja;
     public function crearEncuesta()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO criptos (precio,nombre, foto,nacionalidad) VALUES (:precio,:nombre, :foto, :nacionalidad)");
-        $consulta->bindValue(':precio', $this->precio);
-        $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
-        $consulta->bindValue(':nacionalidad', $this->nacionalidad, PDO::PARAM_STR);
-        $consulta->bindValue(':foto', $this->foto);
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO encuestas (codigoMesa,codigoPedido, puntuacionMesa,puntuacionRestaurante,puntuacionMozo,puntuacionCocinero,detalles,fecha) VALUES (:codigoMesa,:codigoPedido, :puntuacionMesa, :puntuacionRestaurante,:puntuacionMozo,:puntuacionCocinero,:detalles,:fecha)");
+        $consulta->bindValue(':codigoMesa', $this->codigoMesa, PDO::PARAM_STR);
+        $consulta->bindValue(':codigoPedido', $this->codigoPedido, PDO::PARAM_STR);
+        $consulta->bindValue(':puntuacionRestaurante', $this->puntuacionRestaurante);
+        $consulta->bindValue(':puntuacionMesa', $this->puntuacionMesa);
+        $consulta->bindValue(':puntuacionMozo', $this->puntuacionMozo);
+        $consulta->bindValue(':puntuacionCocinero', $this->puntuacionCocinero);
+        $consulta->bindValue(':detalles', $this->detalles, PDO::PARAM_STR);
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
+        $fecha = new DateTime(date("d-m-Y"));
+        $consulta->bindValue(':fecha', date_format($fecha, 'Y-m-d H:i:s'));
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();

@@ -25,6 +25,7 @@ require_once './middlewares/VerificarEncargadosProducPediMiddleware.php';
 require_once './middlewares/VerificarCerveceroMiddleware.php';
 require_once './middlewares/GuardarCsvMiddlewares.php';
 
+require_once './controllers/EncuestaController.php';
 require_once './controllers/ProductoPedidoController.php';
 require_once './controllers/ProductoControllers.php';
 require_once './controllers/UsuarioController.php';
@@ -61,6 +62,8 @@ $app->group(
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
     $group->get('/codigoPedido', \PedidoController::class . ':TraerUno');
     $group->get('/PrecioFinal', \PedidoController::class . ':TraerPrecioPedido');
+    $group->get('/listos', \PedidoController::class . ':TraerPedidosListos');
+    $group->get('/mesa', \PedidoController::class . ':TraerPedidoPorMesa');
     $group->post('[/Alta]', \PedidoController::class . ':CargarUno'); //cargar
     $group->post('/cargarFoto', \PedidoController::class . ':CargarFoto'); //cargar
     $group->put('[/modificar]', \PedidoController::class . ':ModificarUno');
@@ -97,6 +100,17 @@ $app->group(
   }
 )->add(
   new VerificarMozosMiddleware()
+);
+//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
+$app->group(
+  '/encuesta',
+  function (RouteCollectorProxy $group) {
+    $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(new VerificarSocioMiddleware());
+    $group->post('[/cargar]', \EncuestaController::class . ':CargarUno');
+    $group->put('[/estadoMesaLibre]', \EncuestaController::class . ':ModificarEstadoLibre');
+    $group->delete('[/]', \EncuestaController::class . ':BorrarUno');
+  }
 );
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------

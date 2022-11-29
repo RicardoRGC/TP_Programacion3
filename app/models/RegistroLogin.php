@@ -1,13 +1,12 @@
 <?php
 
-class Usuario
+class RegistroLogin
 {
     public $id;
+    public $idUsuario;
     public $nombre;
-    public $clave;
     public $tipo;
-    public $fecha_alta;
-    public $fecha_baja;
+    public $fechaIngreso;
     public function crearUsuario()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -30,7 +29,7 @@ class Usuario
         $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, clave ,tipo,fecha_alta,fecha_baja FROM usuarios ");
         $consulta->execute();
 
-        return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
+        return $consulta->fetchAll(PDO::FETCH_CLASS, 'RegistroLogin');
     }
     // public static function obtenerTodosBaja()
     // {
@@ -38,7 +37,7 @@ class Usuario
     //     $consulta = $objAccesoDatos->prepararConsulta("SELECT id, usuario, clave FROM usuarios WHERE fecha_baja is not null ");
     //     $consulta->execute();
 
-    //     return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
+    //     return $consulta->fetchAll(PDO::FETCH_CLASS, 'RegistroLogin');
     // }
 
     public static function obtenerUsuario($nombre)
@@ -48,7 +47,7 @@ class Usuario
         $consulta->bindValue(':nombre', $nombre, PDO::PARAM_STR);
         $consulta->execute();
 
-        return $consulta->fetchObject('Usuario');
+        return $consulta->fetchObject('RegistroLogin');
     }
 
     // public function modificarUsuario()
