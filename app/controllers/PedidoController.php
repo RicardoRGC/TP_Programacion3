@@ -25,8 +25,8 @@ class PedidoController extends Pedido implements IApiUsable
 
         //VERIFICAR DATOS EN LA MESA
         $mesa = Mesa::obtenerMesa($codigoMesa);
-        if ($mesa->estado == 'ocupada')
-          throw  new Exception("Mesa ocupada");
+        if ($mesa->estado != 'libre')
+          throw new Exception("Mesa ocupada");
         $mesa->nombreCliente = $nombreCliente;
         $mesa->ocuparMesa();
 
@@ -100,7 +100,7 @@ class PedidoController extends Pedido implements IApiUsable
           $ext = $foto->getClientMediaType();
           var_dump($ext);
           $ext = explode("/", $ext)[1];
-          $ruta = "./pedido/"  . $usuario->id . "-" . $codigoPedido . "." . $ext;
+          $ruta = "./pedido/" . $usuario->id . "-" . $codigoPedido . "." . $ext;
           $foto->moveTo($ruta);
         } catch (Exception $e) {
           echo "no se pudo subir la imagen";

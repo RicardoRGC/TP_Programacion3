@@ -65,7 +65,7 @@ class LoginControllers extends Usuario
 
             $usuario = Usuario::obtenerUsuario($nombre);
 
-            var_dump($usuario->fecha_baja);
+            // var_dump($usuario->fecha_baja);
             if (password_verify($clave, $usuario->clave)) {
                 $mensaje = 'Password is valid!';
                 if (is_null($usuario->fecha_baja)) {

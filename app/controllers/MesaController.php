@@ -124,6 +124,64 @@ class MesaController extends Mesa implements IApiUsable
         'application/json'
       );
   }
+  public function ModificarEstadoComiendo($request, $response, $args)
+  {
+
+    $parametros = $request->getParsedBody();
+
+    if ($parametros != null) {
+
+
+      // $nombreCliente = $parametros['nombreCliente'];
+      // $estado = $parametros['estado'];
+      $idMesa = $parametros['idMesa'];
+
+      $usr = new Mesa();
+      $usr->id = $idMesa;
+
+      $usr->mesaEstadoComiendo();
+
+      $payload = json_encode(array("mensaje" => "Mesa modificado con exito"));
+    } else {
+
+      $payload = json_encode("error de datos");
+    }
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  public function ModificarEstadoCerrada($request, $response, $args)
+  {
+
+    $parametros = $request->getParsedBody();
+
+    if ($parametros != null) {
+
+
+      // $nombreCliente = $parametros['nombreCliente'];
+      // $estado = $parametros['estado'];
+      $idMesa = $parametros['idMesa'];
+
+      $usr = new Mesa();
+      $usr->id = $idMesa;
+
+      $usr->mesaEstadoCerrada();
+
+      $payload = json_encode(array("mensaje" => "Mesa modificado con exito"));
+    } else {
+
+      $payload = json_encode("error de datos");
+    }
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
 
   public function BorrarUno($request, $response, $args)
   {

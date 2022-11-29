@@ -62,7 +62,7 @@ class Mesa
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET estado = :estado, nombreCliente = :nombreCliente WHERE id = :id");
-        $consulta->bindValue(':estado', 'ocupada');
+        $consulta->bindValue(':estado', 'Esperando Pedido');
         $consulta->bindValue(':nombreCliente', $this->nombreCliente, PDO::PARAM_STR);
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->execute();
@@ -72,6 +72,24 @@ class Mesa
         $objAccesoDato = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET estado = :estado, nombreCliente = :nombreCliente WHERE id = :id");
         $consulta->bindValue(':estado', 'libre');
+        $consulta->bindValue(':nombreCliente', '');
+        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $consulta->execute();
+    }
+    public function mesaEstadoComiendo()
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET estado = :estado, nombreCliente = :nombreCliente WHERE id = :id");
+        $consulta->bindValue(':estado', 'comiendo');
+        $consulta->bindValue(':nombreCliente', '');
+        $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $consulta->execute();
+    }
+    public function mesaEstadoCerrada()
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE mesas SET estado = :estado, nombreCliente = :nombreCliente WHERE id = :id");
+        $consulta->bindValue(':estado', 'cerrada');
         $consulta->bindValue(':nombreCliente', '');
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->execute();

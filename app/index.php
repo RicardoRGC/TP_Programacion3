@@ -95,7 +95,9 @@ $app->group(
   function (RouteCollectorProxy $group) {
     $group->get('[/]', \MesaController::class . ':TraerTodos');
     $group->post('[/Alta]', \MesaController::class . ':CargarUno')->add(new VerificarSocioMiddleware());
-    $group->put('[/estadoMesaLibre]', \MesaController::class . ':ModificarEstadoLibre');
+    $group->put('/estadoMesaLibre', \MesaController::class . ':ModificarEstadoLibre');
+    $group->put('/estadoMesaComiendo', \MesaController::class . ':ModificarEstadoComiendo');
+    $group->put('/estadoMesaCerrada', \MesaController::class . ':ModificarEstadoCerrada');
     $group->delete('[/]', \MesaController::class . ':BorrarUno')->add(new VerificarSocioMiddleware());
   }
 )->add(
@@ -107,9 +109,8 @@ $app->group(
   '/encuesta',
   function (RouteCollectorProxy $group) {
     $group->get('[/]', \EncuestaController::class . ':TraerTodos')->add(new VerificarSocioMiddleware());
-    $group->post('[/cargar]', \EncuestaController::class . ':CargarUno');
-    $group->put('[/estadoMesaLibre]', \EncuestaController::class . ':ModificarEstadoLibre');
-    $group->delete('[/]', \EncuestaController::class . ':BorrarUno');
+    $group->get('/TraerMejorEncuesta', \EncuestaController::class . ':TraerMejorEncuesta')->add(new VerificarSocioMiddleware());
+    $group->post('/cargar', \EncuestaController::class . ':CargarUno');
   }
 );
 //--------------------------------------------------------------------------------

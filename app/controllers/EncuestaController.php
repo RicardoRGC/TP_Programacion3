@@ -78,7 +78,7 @@ class EncuestaController extends Encuesta implements IApiUsable
           $ext = $foto->getClientMediaType();
           var_dump($ext);
           $ext = explode("/", $ext)[1];
-          $ruta = "./pedido/"  . $usuario->id . "-" . $codigoPedido . "." . $ext;
+          $ruta = "./pedido/" . $usuario->id . "-" . $codigoPedido . "." . $ext;
           $foto->moveTo($ruta);
         } catch (Exception $e) {
           echo "no se pudo subir la imagen";
@@ -145,6 +145,20 @@ class EncuestaController extends Encuesta implements IApiUsable
   public function TraerTodos($request, $response, $args)
   {
     $lista = Encuesta::obtenerTodos();
+    $payload = json_encode(array("ListaPedidos" => $lista));
+
+    $response->getBody()->write($payload);
+    return $response
+      ->withHeader(
+        'Content-Type',
+        'application/json'
+      );
+  }
+  public function TraerMejorEncuesta($request, $response, $args)
+  {
+    $lista = Encuesta::obtenerMejorEncuesta();
+
+
     $payload = json_encode(array("ListaPedidos" => $lista));
 
     $response->getBody()->write($payload);

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-11-2022 a las 13:34:26
+-- Tiempo de generación: 29-11-2022 a las 21:50:13
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 7.4.29
 
@@ -57,7 +57,8 @@ CREATE TABLE `encuestas` (
 --
 
 INSERT INTO `encuestas` (`id`, `codigoMesa`, `codigoPedido`, `puntuacionMesa`, `puntuacionRestaurante`, `puntuacionMozo`, `puntuacionCocinero`, `detalles`, `fecha`) VALUES
-(1, '4', 'kvzb2', 2, 6, 5, 4, 'muy rica comida.', '2022-11-27');
+(1, '4', 'kvzb2', 2, 6, 5, 4, 'muy rica comida.', '2022-11-27'),
+(2, '4', 'kvzb2', 10, 6, 5, 4, 'muy rica comida.', '2022-11-29');
 
 -- --------------------------------------------------------
 
@@ -77,11 +78,11 @@ CREATE TABLE `mesas` (
 --
 
 INSERT INTO `mesas` (`id`, `numeroMesa`, `estado`, `nombreCliente`) VALUES
-(1, 0, 'libre', ''),
-(2, 0, 'ocupada', 'ramon'),
-(3, 0, 'ocupada', 'ramon'),
+(1, 0, 'Esperando Pedido', 'ramon'),
+(2, 0, 'Esperando Pedido', 'ramon'),
+(3, 0, 'libre', ''),
 (4, 0, 'libre', ''),
-(5, 0, 'ocupada', 'ramon'),
+(5, 0, 'libre', ''),
 (6, 0, 'libre', NULL);
 
 -- --------------------------------------------------------
@@ -107,11 +108,11 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id`, `codigoPedido`, `codigoMesa`, `idUsuario`, `demoraPedido`, `estado`, `foto`, `fecha_alta`, `fecha_baja`) VALUES
-(10017, 'kvzb2', 4, 8, 20, 'preparando', '', NULL, NULL),
-(10018, '3paue', 5, 8, NULL, 'pendiente', './pedido/7-3paue.jpeg', NULL, NULL),
-(10019, '0nye7', 2, 7, NULL, 'listo', '', '2022-11-23', NULL),
-(10020, 'bh8ql', 2, 7, NULL, 'pendiente', '', '2022-11-23', NULL),
-(10021, 't5r1h', 3, 7, NULL, 'pendiente', '', '2022-11-23', NULL);
+(10023, '7g53n', 1, 16, 0, 'listo', './pedido/1-7g53n.jpeg', '2022-11-29', NULL),
+(10024, 'y8wph', 2, 16, NULL, 'pendiente', './pedido/2-y8wph.jpeg', '2022-11-29', NULL),
+(10025, 'lq4uh', 1, 16, NULL, 'pendiente', './pedido/1-lq4uh.jpeg', '2022-11-29', NULL),
+(10026, 'ptv9y', 2, 16, NULL, 'pendiente', './pedido/2-ptv9y.jpeg', '2022-11-29', NULL),
+(10027, '0ld9n', 2, 16, NULL, 'pendiente', './pedido/2-0ld9n.jpeg', '2022-11-29', NULL);
 
 -- --------------------------------------------------------
 
@@ -161,12 +162,7 @@ CREATE TABLE `productospedidos` (
 --
 
 INSERT INTO `productospedidos` (`id`, `cantidad`, `estado`, `idProducto`, `demora`, `codigoPedido`, `fecha_alta`, `fecha_baja`, `id_preparador`) VALUES
-(40, 5, 'listo', 1, 0, 'kvzb2', NULL, NULL, NULL),
-(41, 5, 'listo', 4, 0, 'kvzb2', NULL, NULL, NULL),
-(42, 5, 'preparando', 4, 20, 'kvzb2', '2022-11-23', NULL, NULL),
-(43, 5, 'pendiente', 4, NULL, 'kvzb2', '2022-11-23', NULL, NULL),
-(44, 5, 'listo', 2, 0, 'kvzb2', '2022-11-25', NULL, 9),
-(45, 5, 'pendiente', 1, NULL, 'kvzb2', '2022-11-25', NULL, NULL);
+(48, 2, 'listo', 1, 0, '7g53n', '2022-11-29', NULL, 14);
 
 -- --------------------------------------------------------
 
@@ -181,6 +177,14 @@ CREATE TABLE `registros_login` (
   `tipo` varchar(50) COLLATE utf8mb4_spanish2_ci NOT NULL,
   `fechaIngreso` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `registros_login`
+--
+
+INSERT INTO `registros_login` (`id`, `idUsuario`, `nombre`, `tipo`, `fechaIngreso`) VALUES
+(21, 16, 'mozo', 'mozo', '2022-11-29 14:54:10'),
+(22, 14, 'socio', 'socio', '2022-11-29 14:54:58');
 
 -- --------------------------------------------------------
 
@@ -202,7 +206,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `clave`, `tipo`, `fecha_alta`, `fecha_baja`) VALUES
-(14, 'socio', '$2y$10$u7rvvb6/ll4fIwHIuUg6hu3zonern4DzURruQSj2cisMGxLdvSu2G', 'socio', '2022-11-25', NULL);
+(14, 'socio', '$2y$10$u7rvvb6/ll4fIwHIuUg6hu3zonern4DzURruQSj2cisMGxLdvSu2G', 'socio', '2022-11-25', NULL),
+(15, 'cocinero1', '$2y$10$mpjQTaSJVKgt0/rSJWam4OuYJi8dBbfPmuKhhUVWvkZQJ1ujF6JUS', 'cocinero', '2022-11-29', '2022-11-29'),
+(16, 'mozo', '$2y$10$Vs3CuiY2I226/rsqXIUGaedsKVl5S7Wmig1QUkqqml0InyEBUnCTK', 'mozo', '2022-11-29', NULL);
 
 --
 -- Índices para tablas volcadas
@@ -270,7 +276,7 @@ ALTER TABLE `cuenta`
 -- AUTO_INCREMENT de la tabla `encuestas`
 --
 ALTER TABLE `encuestas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `mesas`
@@ -282,7 +288,7 @@ ALTER TABLE `mesas`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10022;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10028;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -294,19 +300,19 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `productospedidos`
 --
 ALTER TABLE `productospedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT de la tabla `registros_login`
 --
 ALTER TABLE `registros_login`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

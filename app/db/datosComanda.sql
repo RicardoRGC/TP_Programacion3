@@ -1,3 +1,5 @@
+SELECT encuestas.detalles, MAX((puntuacionMesa + puntuacionRestaurante+puntuacionMozo+puntuacionCocinero)/4) totalpuntos FROM encuestas 
+
 SELECT nombre, tipo
 FROM (
     SELECT productos.nombre as nombre, productos.tipo as tipo

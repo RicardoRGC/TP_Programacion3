@@ -30,13 +30,22 @@ class Encuesta
         return $objAccesoDatos->obtenerUltimoId();
     }
 
+    public static function obtenerMejorEncuesta()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT encuestas.detalles, MAX((puntuacionMesa + puntuacionRestaurante+puntuacionMozo+puntuacionCocinero)/4) totalpuntos FROM encuestas ");
+        $consulta->execute();
+
+        // return $consulta->fetchAll(PDO::FETCH_CLASS, 'Encuesta');
+        return $consulta->fetch(PDO::FETCH_ASSOC);
+    }
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT id, precio,nombre, foto ,nacionalidad FROM criptos ");
         $consulta->execute();
 
-        return $consulta->fetchAll(PDO::FETCH_CLASS, 'Encuesta');
+        return $consulta->fetch(PDO::FETCH_ASSOC);
     }
     public static function obtenerTodosBaja()
     {
