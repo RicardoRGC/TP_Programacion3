@@ -53,7 +53,7 @@ $app->group(
     $group->get('[/]', \UsuarioController::class . ':TraerTodos')->add(new VerificarSocioMiddleware());
     $group->post('[/Alta]', \UsuarioController::class . ':CargarUno');
     $group->put('[/modificar]', \UsuarioController::class . ':ModificarUno');
-    $group->delete('[/]', \UsuarioController::class . ':BorrarUno');
+    $group->delete('[/]', \UsuarioController::class . ':BorrarUno')->add(new VerificarSocioMiddleware());
   }
 );
 $app->group(
@@ -70,8 +70,8 @@ $app->group(
     $group->delete('[/]', \PedidoController::class . ':BorrarUno');
   }
 )->add(
-  new VerificarMozosMiddleware()
-);
+    new VerificarMozosMiddleware()
+  );
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 $app->group(
@@ -99,8 +99,8 @@ $app->group(
     $group->delete('[/]', \MesaController::class . ':BorrarUno')->add(new VerificarSocioMiddleware());
   }
 )->add(
-  new VerificarMozosMiddleware()
-);
+    new VerificarMozosMiddleware()
+  );
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 $app->group(
@@ -125,8 +125,22 @@ $app->group(
   }
 )->add(new VerificarMozosMiddleware());
 //--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
+$app->group(
+  '/registros',
+  function (RouteCollectorProxy $group) {
+    $group->get('/guardar', \LoginControllers::class . ':GuardarRegistrosCsv');
+    $group->get('/leerCSV', \LoginControllers::class . ':CargarRegistrosCsv');
+    $group->get('/leerCSVSubirDB', \LoginControllers::class . ':CargarRegistrosCsvSubirDB');
+
+  }
+)->add(new VerificarSocioMiddleware());
+//--------------------------------------------------------------------------------
 $app->post('/login', \LoginControllers::class . ':Verificar'); //Clave ,usuario(verificar usuario)
 $app->get('/codigoPedido', \PedidoController::class . ':TraerUno');
+
+
+
 $app->get(
   '[/]',
   function (Request $request, Response $response) {

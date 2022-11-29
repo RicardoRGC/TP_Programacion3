@@ -14,7 +14,7 @@ class GuardarCsvMiddlewares
         $pedidos = Pedido::obtenerTodos();
         // var_dump($pedidos);
         $fp = fopen('fichero.csv', 'w');
-        fwrite($fp, "codigoPedido,codigoMesa,estado" . PHP_EOL);
+        fwrite($fp, "id,idUsuario,nombre,tipo,fechaIngreso" . PHP_EOL);
         foreach ($pedidos as $key => $value) {
             $cant = fwrite($fp, "$value->codigoPedido, $value->codigoMesa , $value->estado " . PHP_EOL);
             // var_dump($value);

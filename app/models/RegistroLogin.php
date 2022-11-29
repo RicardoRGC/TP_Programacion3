@@ -7,17 +7,25 @@ class RegistroLogin
     public $nombre;
     public $tipo;
     public $fechaIngreso;
-    public function crearUsuario()
+    public function crearLogin()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO usuarios (nombre, clave,tipo,fecha_alta) VALUES (:nombre, :clave, :tipo,:fecha_alta)");
-        $claveHash = password_hash($this->clave, PASSWORD_DEFAULT);
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO registros_login (nombre, idUsuario,tipo,fechaIngreso) VALUES (:nombre, :idUsuario, :tipo,:fechaIngreso)");
         $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
         $consulta->bindValue(':tipo', $this->tipo, PDO::PARAM_STR);
-        $consulta->bindValue(':clave', $claveHash);
+        $consulta->bindValue(':idUsuario', $this->idUsuario);
         date_default_timezone_set('America/Argentina/Buenos_Aires');
-        $fecha = new DateTime(date("d-m-Y"));
-        $consulta->bindValue(':fecha_alta', date_format($fecha, 'Y-m-d H:i:s'));
+        /*
+        $fecha = new DateTime();
+        echo $fecha->format('Y-m-d H:i:sP') . "\n";
+        */
+        if (is_null($this->fechaIngreso)) {
+            $fecha = new DateTime();
+            $consulta->bindValue(':fechaIngreso', $fecha->format('Y-m-d H:i:sP'));
+
+        } else {
+            $consulta->bindValue(':fechaIngreso', $this->fechaIngreso);
+        }
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -26,7 +34,7 @@ class RegistroLogin
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, clave ,tipo,fecha_alta,fecha_baja FROM usuarios ");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, idUsuario,tipo,fechaIngreso FROM registros_login ");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'RegistroLogin');

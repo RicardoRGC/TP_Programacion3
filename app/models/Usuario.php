@@ -44,7 +44,7 @@ class Usuario
     public static function obtenerUsuario($nombre)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, clave ,tipo,fecha_alta FROM usuarios WHERE nombre = :nombre");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, clave ,tipo,fecha_alta,fecha_baja FROM usuarios WHERE nombre = :nombre");
         $consulta->bindValue(':nombre', $nombre, PDO::PARAM_STR);
         $consulta->execute();
 
@@ -67,7 +67,9 @@ class Usuario
         $objAccesoDato = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET fecha_baja = :fecha_baja WHERE id = :id");
         $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
-        date_default_timezone_set('	America/Argentina/Buenos_Aires');
+
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
+
         $fecha = new DateTime(date("d-m-Y"));
         $consulta->bindValue(':fecha_baja', date_format($fecha, 'Y-m-d H:i:s'));
         $consulta->execute();
